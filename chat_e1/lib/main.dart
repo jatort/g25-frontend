@@ -77,7 +77,7 @@ class ListViewHandelItemState extends State<ListViewHandelItem> {
                       icon: Icon(Icons.send),
                       color: Colors.blue,
                       onPressed: () { /// Da instrucciones de qué hacer cuando se presiona el botón
-                        Route route = MaterialPageRoute(builder: (bc) => Chat()); /// Acá redirecciona al Chat
+                        Route route = MaterialPageRoute(builder: (bc) => Chat(item)); /// Acá redirecciona al Chat
                         Navigator.of(context).push(route); /// pushea la ruta del Chat
                       },
                     ),
@@ -141,20 +141,27 @@ class ListViewHandelItemState extends State<ListViewHandelItem> {
 /// https://github.com/tensor-programming/dart_flutter_chat_app
 
 class Chat extends StatefulWidget {
+  final String room;
+
+  Chat(this.room);
+
   @override
-  State createState() => new ChatWindow();
+  State createState() => new ChatWindow(room);
 }
 
 class ChatWindow extends State<Chat> with TickerProviderStateMixin {
   final List<Msg> _messages = <Msg>[];
   final TextEditingController _textController = new TextEditingController();
+  final String _room;
   bool _isWriting = false;
+
+  ChatWindow(this._room);
 
   @override
   Widget build(BuildContext ctx) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Nombre Sala: "),
+        title: new Text("Nombre Sala: ${_room}"),
         elevation:
         Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
       ),
