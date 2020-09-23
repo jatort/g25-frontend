@@ -4,8 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 class Chat extends StatefulWidget {
+  final String room;
+
+  Chat(this.room);
+
   @override
-  State createState() => new ChatWindow();
+  State createState() => new ChatWindow(room);
 }
 
 class ChatWindow extends State<Chat> with TickerProviderStateMixin {
@@ -13,7 +17,10 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
 
   String _message;
   String _username;
+  final String _room;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  ChatWindow(this._room);
 
   // Widget Beno para username
   Widget _buildUsername() {
@@ -51,7 +58,7 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
   Widget build(BuildContext ctx) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Nombre Sala: "),
+        title: new Text("Nombre Sala: ${_room}"),
         elevation: Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
       ),
       body: new Column(children: <Widget>[

@@ -77,7 +77,7 @@ class ListViewHandelItemState extends State<ListViewHandelItem> {
                       onPressed: () {
                         /// Da instrucciones de qué hacer cuando se presiona el botón
                         Route route =
-                            MaterialPageRoute(builder: (bc) => Chat());
+                            MaterialPageRoute(builder: (bc) => Chat(item));
 
                         /// Acá redirecciona al Chat
                         Navigator.of(context).push(route);
