@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:scoped_model/scoped_model.dart';
 import 'chat.dart';
+import 'room_list_model.dart';
 
 ListViewHandelItemState chatsPage;
 
@@ -21,6 +22,11 @@ class ListViewHandelItemState extends State<ListViewHandelItem> {
   final nameChatController = TextEditingController(
     text: "",
   );
+
+  @override
+  void initState() {
+    super.initState();
+    ScopedModel.of<RoomListModel>(context, rebuildOnChange: false).init();
 
   @override
   void dispose() {
