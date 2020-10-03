@@ -2,8 +2,9 @@ import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:scoped_model/scoped_model.dart';
 import 'salas_chat.dart';
+import './rooms_model.dart';
 import 'login.dart';
 import 'register.dart';
 
@@ -23,11 +24,16 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return new MaterialApp(
-      title: "Chat ",
-      theme:
-          defaultTargetPlatform == TargetPlatform.iOS ? iOSTheme : androidTheme,
-      home: MainScreen(),
+    return ScopedModel<RoomsModel>(
+      model: RoomsModel(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "Chat ",
+        theme: defaultTargetPlatform == TargetPlatform.iOS
+            ? iOSTheme
+            : androidTheme,
+        home: MainScreen(),
+      ),
 
       /// Acá se crea la clase que contiene la lista de los Chat
     );
