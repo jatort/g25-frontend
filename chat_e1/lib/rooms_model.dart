@@ -18,6 +18,7 @@ class RoomsModel extends Model {
 
   User currentUser = User('testUser1', '123');
   List<Room> roomList = List<Room>();
+  List<Message> messages = List<Message>();
   SocketIO socketIO;
 
   void init() {
@@ -47,9 +48,7 @@ class RoomsModel extends Model {
     notifyListeners();
   }
 
-  List<Message> getMessagesForChatID(String chatID) {
-    return messages
-        .where((msg) => msg.senderID == chatID || msg.receiverID == chatID)
-        .toList();
+  List<Message> getMessagesForRoomID(String roomID) {
+    return messages.where((msg) => msg.roomID == roomID).toList();
   }
 }
