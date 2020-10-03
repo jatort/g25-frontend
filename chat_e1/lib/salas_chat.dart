@@ -20,7 +20,7 @@ class ListViewHandelItemState extends State<ListViewHandelItem> {
   @override
   void initState() {
     super.initState();
-    ScopedModel.of<RoomsModel>(context, rebuildOnChange: false).init();
+    ScopedModel.of<RoomsModel>(context, rebuildOnChange: true).init();
   }
 
   List<String> items = <String>['Sala 1', 'Games', 'Music'];
@@ -40,26 +40,26 @@ class ListViewHandelItemState extends State<ListViewHandelItem> {
     return Scaffold(
       appBar: AppBar(title: Text("Chat List")),
       body: ScopedModelDescendant<RoomsModel>(
-        builder: (context, child, model) {
+        builder: (BuildContext context, Widget child, RoomsModel model) {
           return Column(
             children: <Widget>[
               Expanded(
                 child: ListView.builder(
                   itemCount: model.roomList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final item = items[index];
+                    final item = model.roomList[index];
                     return Dismissible(
-                      key: Key(item),
+                      key: Key(item.roomID),
                       direction: DismissDirection.startToEnd,
                       child: ListTile(
-                        title: Text(item),
+                        title: Text(item.name),
                         trailing: IconButton(
                           icon: Icon(Icons.send),
                           color: Colors.blue,
                           onPressed: () {
                             /// Da instrucciones de qué hacer cuando se presiona el botón
-                            Route route =
-                                MaterialPageRoute(builder: (bc) => Chat(item));
+                            Route route = MaterialPageRoute(
+                                builder: (bc) => Chat(item.name));
 
                             /// Acá redirecciona al Chat
                             Navigator.of(context).push(route);

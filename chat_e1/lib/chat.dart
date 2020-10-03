@@ -58,6 +58,7 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
   Widget build(BuildContext ctx) {
     return new Scaffold(
       appBar: new AppBar(
+        // ignore: unnecessary_brace_in_string_interps
         title: new Text("Nombre Sala: ${_room}"),
         elevation: Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
       ),
