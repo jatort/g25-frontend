@@ -7,7 +7,7 @@ import './User.dart';
 import './Message.dart';
 
 class ChatModel extends Model {
-  List<ChatRoom> users = [
+  List<ChatRoom> chatrooms = [
     ChatRoom('IronMan', '111'),
     ChatRoom('Captain America', '222'),
     ChatRoom('Antman', '333'),
@@ -15,19 +15,17 @@ class ChatModel extends Model {
     ChatRoom('Thor', '555'),
   ];
 
-  ChatRoom currentUser;
-  List<ChatRoom> friendList = List<ChatRoom>();
+  String currentUser;
+  List<ChatRoom> chatRoomList = List<ChatRoom>();
   List<Message> messages = List<Message>();
   SocketIO socketIO;
 
   void init() {
-    currentUser = users[1];
-    friendList =
-        users.where((user) => user.chatID != currentUser.chatID).toList();
+    currentUser = "Juan";
+    chatRoomList = chatrooms.toList();
 
     socketIO = SocketIOManager().createSocketIO(
-        'https://fluchat.herokuapp.com/', '/',
-        query: 'chatID=${currentUser.chatID}');
+        'https://servere1chat.herokuapp.com', '/');
     socketIO.init();
 
     socketIO.subscribe('receive_message', (jsonData) {
@@ -40,13 +38,13 @@ class ChatModel extends Model {
     socketIO.connect();
   }
 
-  void sendMessage(String text, String receiverChatID) {
-    messages.add(Message(text, currentUser.chatID, receiverChatID));
+  void sendMessage(String username, String text, String receiverChatID) {
+    messages.add(Message(text, username, receiverChatID));
     socketIO.sendMessage(
       'send_message',
       json.encode({
         'receiverChatID': receiverChatID,
-        'senderChatID': currentUser.chatID,
+        'senderChatID': username,
         'content': text,
       }),
     );

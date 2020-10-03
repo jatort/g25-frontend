@@ -17,11 +17,11 @@ class _AllChatsPageState extends State<AllChatsPage> {
     ScopedModel.of<ChatModel>(context, rebuildOnChange: false).init();
   }
 
-  void friendClicked(ChatRoom friend) {
+  void chatRoomClicked(ChatRoom chatroom) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return ChatPage(friend);
+          return ChatPage(chatroom);
         },
       ),
     );
@@ -31,12 +31,12 @@ class _AllChatsPageState extends State<AllChatsPage> {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
         return ListView.builder(
-          itemCount: model.friendList.length,
+          itemCount: model.chatRoomList.length,
           itemBuilder: (BuildContext context, int index) {
-            ChatRoom friend = model.friendList[index];
+            ChatRoom chatroom = model.chatRoomList[index];
             return ListTile(
-              title: Text(friend.name),
-              onTap: () => friendClicked(friend),
+              title: Text(chatroom.name),
+              onTap: () => chatRoomClicked(chatroom),
             );
           },
         );
