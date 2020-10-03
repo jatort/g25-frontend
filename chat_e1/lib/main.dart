@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
 
 class MainScreen extends StatelessWidget {
   // ignore: unused_element
+
   Widget _buildBottonRegistrarse(context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
