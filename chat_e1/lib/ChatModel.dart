@@ -25,7 +25,10 @@ class ChatModel extends Model {
     chatRoomList = chatrooms.toList();
 
     socketIO = SocketIOManager().createSocketIO(
-        'https://servere1chat.herokuapp.com', '/');
+        'https://servere1chat.herokuapp.com',
+        '/',
+        query: 'chatID=${currentUser}'
+    );
     socketIO.init();
 
     socketIO.subscribe('receive_message', (jsonData) {
@@ -39,12 +42,12 @@ class ChatModel extends Model {
   }
 
   void sendMessage(String username, String text, String receiverChatID) {
-    messages.add(Message(text, username, receiverChatID));
+    messages.add(Message(text, currentUser, receiverChatID));
     socketIO.sendMessage(
       'send_message',
       json.encode({
         'receiverChatID': receiverChatID,
-        'senderChatID': username,
+        'senderChatID': currentUser,
         'content': text,
       }),
     );

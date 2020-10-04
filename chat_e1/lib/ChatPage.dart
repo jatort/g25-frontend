@@ -99,7 +99,7 @@ class _ChatPageState extends State<ChatPage> {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
         List<Message> messages =
-        model.getMessagesForChatID(widget.chatroom.chatID);
+        model.getMessagesForChatID(widget.chatroom.name);
 
         return Container(
           height: MediaQuery.of(context).size.height * 0.75,
@@ -154,7 +154,7 @@ class _ChatPageState extends State<ChatPage> {
                         }
                         _formKey.currentState.save();
                         model.sendMessage(_username,
-                            _message, widget.chatroom.chatID);
+                            _message, widget.chatroom.name);
                         _formKey.currentState.reset();
                         //_submitMsg(_message, _username);
                       }),
