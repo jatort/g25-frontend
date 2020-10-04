@@ -26,9 +26,7 @@ class ChatModel extends Model {
 
     socketIO = SocketIOManager().createSocketIO(
         'https://servere1chat.herokuapp.com',
-        '/',
-        query: 'chatID=${currentUser}'
-    );
+        '/');
     socketIO.init();
 
     socketIO.subscribe('receive_message', (jsonData) {
@@ -56,7 +54,7 @@ class ChatModel extends Model {
 
   List<Message> getMessagesForChatID(String chatID) {
     return messages
-        .where((msg) => msg.senderID == chatID || msg.receiverID == chatID)
+        .where((msg) => msg.receiverID == chatID)
         .toList();
   }
 }
