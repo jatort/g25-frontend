@@ -4,13 +4,9 @@ import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-<<<<<<< HEAD
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-=======
-import 'dart:convert';
->>>>>>> 0667c48f00e9e452333edaa13026843081c28398
 
 class Chat extends StatefulWidget {
   final String room;
@@ -85,32 +81,11 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
 
 
   @override
-<<<<<<< HEAD
-  Widget build(BuildContext ctx) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Nombre Sala: $_room"),
-        elevation: Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-      ),
-      body: new Column(children: <Widget>[
-        new Flexible(
-            child: new ListView.builder(
-          itemBuilder: (_, int index) => _messages[index],
-          itemCount: _messages.length,
-          reverse: true,
-          padding: new EdgeInsets.all(6.0),
-        )),
-        new Divider(height: 1.0),
-        new Container(
-          child: _buildComposer(),
-          decoration: new BoxDecoration(color: Colors.white),
-=======
     Widget build(BuildContext ctx) {
       return new Scaffold(
         appBar: new AppBar(
           title: new Text("Nombre Sala: ${_room}"),
           elevation: Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
->>>>>>> 0667c48f00e9e452333edaa13026843081c28398
         ),
         body: new Column(children: <Widget>[
           new Flexible(
