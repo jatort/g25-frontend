@@ -62,6 +62,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_socket_io:
+    dependency: "direct main"
+    description:
+      name: flutter_socket_io
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -102,6 +109,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+<<<<<<< HEAD
   pedantic:
     dependency: transitive
     description:
@@ -109,6 +117,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.0"
+=======
+  scoped_model:
+    dependency: "direct main"
+    description:
+      name: scoped_model
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
+>>>>>>> 0667c48f00e9e452333edaa13026843081c28398
   sky_engine:
     dependency: transitive
     description: flutter

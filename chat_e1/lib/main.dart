@@ -1,8 +1,13 @@
+import 'package:chat_e1/AllChatsPage.dart';
+import 'package:chat_e1/ChatModel.dart';
+import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-import 'chat.dart';
+import 'login.dart';
+import 'register.dart';
 
 final ThemeData iOSTheme = new ThemeData(
   primarySwatch: Colors.blue,
@@ -20,123 +25,165 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return new MaterialApp(
+    return ScopedModel(
+     model: ChatModel(),
+     child: MaterialApp(
       title: "Chat ",
       theme:
           defaultTargetPlatform == TargetPlatform.iOS ? iOSTheme : androidTheme,
-      home: new ListViewHandelItem(),
+      home: MainScreen(),
 
       /// Acá se crea la clase que contiene la lista de los Chat
+     )
     );
   }
 }
 
-ListViewHandelItemState chatsPage;
-
-class ListViewHandelItem extends StatefulWidget {
-  @override
-  ListViewHandelItemState createState() {
-    chatsPage = ListViewHandelItemState();
-    return chatsPage;
+class MainScreen extends StatelessWidget {
+  // ignore: unused_element
+  Widget _buildBottonRegistrarse(context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RegisterScreen()),
+          );
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'REGISTRARSE',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
   }
-}
 
-/// https://here4you.tistory.com/185
-class ListViewHandelItemState extends State<ListViewHandelItem> {
-  List<String> items = <String>['Sala 1', 'Games', 'Music'];
+  Widget _buildBottonIniciarSesion(context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'INICIAR SESION',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
 
-  final nameChatController = TextEditingController(
-    text: "",
-  );
-
-  @override
-  void dispose() {
-    nameChatController.dispose();
-    super.dispose();
+  Widget _buildBottonSalasChat(context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AllChatsPage()),
+          );
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'SALAS DE CHAT',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Chat List")),
-      body: Column(
+    return new Scaffold(
+      body: Stack(
         children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return Dismissible(
-                  key: Key(item),
-                  direction: DismissDirection.startToEnd,
-                  child: ListTile(
-                    title: Text(item),
-                    trailing: IconButton(
-                      icon: Icon(Icons.send),
-                      color: Colors.blue,
-                      onPressed: () {
-                        /// Da instrucciones de qué hacer cuando se presiona el botón
-                        Route route =
-                            MaterialPageRoute(builder: (bc) => Chat(item));
-
-                        /// Acá redirecciona al Chat
-                        Navigator.of(context).push(route);
-
-                        /// pushea la ruta del Chat
-                      },
-                    ),
-                  ),
-                );
-              },
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF73AEF5),
+                  Color(0xFF61A4F1),
+                  Color(0xFF478DE0),
+                  Color(0xFF398AE5),
+                ],
+                stops: [0.1, 0.4, 0.7, 0.9],
+              ),
             ),
           ),
-          Divider(
-            color: Colors.blue,
-            height: 5,
-            indent: 10,
-            endIndent: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Row(
-              children: <Widget>[
-                Text("Chat Name:"),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: TextField(
-                      controller: nameChatController,
-                      onSubmitted: (text) {
-                        setState(() {
-                          if (nameChatController.text != "") {
-                            items.add(nameChatController.text);
-                          }
-                        });
-                        nameChatController.clear();
-                      },
-                    ),
-                  ),
-                ),
-                RaisedButton(
-                  child: new Text(
-                    "New Chat Room",
+          Container(
+            height: double.infinity,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: 40.0,
+                vertical: 120.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Sing In',
                     style: TextStyle(
                       color: Colors.white,
+                      fontFamily: 'OpenSans',
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  color: Colors.green,
-                  onPressed: () {
-                    setState(() {
-                      if (nameChatController.text != "") {
-                        items.add(nameChatController.text);
-                      }
-                    });
-                    nameChatController.clear();
-                  },
-                )
-              ],
+                  SizedBox(height: 30.0),
+                  _buildBottonRegistrarse(context),
+                  _buildBottonIniciarSesion(context),
+                  _buildBottonSalasChat(context),
+                ],
+              ),
             ),
-          ),
+          )
         ],
       ),
     );

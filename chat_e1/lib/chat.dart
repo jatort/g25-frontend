@@ -1,10 +1,16 @@
-/// https://github.com/tensor-programming/dart_flutter_chat_ap
+/// https://github.com/tensor-programming/dart_flutter_chat_app
+import 'package:flutter_socket_io/flutter_socket_io.dart';
+import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+<<<<<<< HEAD
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+=======
+import 'dart:convert';
+>>>>>>> 0667c48f00e9e452333edaa13026843081c28398
 
 class Chat extends StatefulWidget {
   final String room;
@@ -21,9 +27,28 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
   String _message;
   String _username;
   final String _room;
+  SocketIO socketIO;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   ChatWindow(this._room);
+
+  void initState() {
+    //Creating the socket
+    socketIO = SocketIOManager().createSocketIO(
+      'https://fluchat.herokuapp.com/','/',
+      query: 'ChatID=${_room}');
+    //Call init before doing anything with socket
+    socketIO.init();
+    //Subscribe to an event to listen to
+    socketIO.subscribe('receive_message', (jsonData) {
+      //Convert the JSON data received into a Map
+      Map<String, dynamic> data = json.decode(jsonData);
+      _submitMsg(data['content'], data['senderChatID'], data['receiverChatID']);
+    });
+    //Connect to the socket
+    socketIO.connect();
+    super.initState();
+  }
 
   // Widget Beno para username
   Widget _buildUsername() {
@@ -57,7 +82,10 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
     );
   }
 
+
+
   @override
+<<<<<<< HEAD
   Widget build(BuildContext ctx) {
     return new Scaffold(
       appBar: new AppBar(
@@ -76,9 +104,29 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
         new Container(
           child: _buildComposer(),
           decoration: new BoxDecoration(color: Colors.white),
+=======
+    Widget build(BuildContext ctx) {
+      return new Scaffold(
+        appBar: new AppBar(
+          title: new Text("Nombre Sala: ${_room}"),
+          elevation: Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
+>>>>>>> 0667c48f00e9e452333edaa13026843081c28398
         ),
-      ]),
-    );
+        body: new Column(children: <Widget>[
+          new Flexible(
+              child: new ListView.builder(
+                itemBuilder: (_, int index) => _messages[index],
+                itemCount: _messages.length,
+                reverse: true,
+                padding: new EdgeInsets.all(6.0),
+              )),
+          new Divider(height: 1.0),
+          new Container(
+            child: _buildComposer(),
+            decoration: new BoxDecoration(color: Colors.white),
+          ),
+        ]),
+      );
   }
 
   Widget _buildComposer() {
@@ -119,7 +167,15 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
                     }
                     _formKey.currentState.save();
 
-                    _submitMsg(_message, _username);
+                    _submitMsg(_message, _username, _room);
+                    socketIO.sendMessage(
+                      'send_message',
+                      json.encode({
+                        'receiverChatID': _room,
+                        'senderChatID': _username,
+                        'content': _message,
+                      }),
+                    );
                     _formKey.currentState.reset();
                     //_submitMsg(_message, _username);
                   }),
@@ -132,9 +188,10 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
     );
   }
 
-  void _submitMsg(String txt, String username) {
+  void _submitMsg(String txt, String username, String chatroomname) {
     Msg msg = new Msg(
       txt: txt,
+      chatroomname: chatroomname,
       username: username,
       animationController: new AnimationController(
           vsync: this, duration: new Duration(milliseconds: 800)),
@@ -155,9 +212,10 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
 }
 
 class Msg extends StatelessWidget {
-  Msg({this.txt, this.username, this.animationController});
+  Msg({this.txt, this.username, this.animationController, this.chatroomname});
   final String txt;
   final String username;
+  final String chatroomname;
   final AnimationController animationController;
   @override
   Widget build(BuildContext ctx) {
