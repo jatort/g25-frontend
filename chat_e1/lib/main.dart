@@ -1,7 +1,12 @@
+// ignore: avoid_web_libraries_in_flutter
+
+import 'dart:convert';
+
 import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 import 'salas_chat.dart';
 import 'login.dart';
@@ -17,6 +22,30 @@ final ThemeData androidTheme = new ThemeData(
   primarySwatch: Colors.blue,
   accentColor: Colors.green,
 );
+
+/*
+_signUp() async {
+  String url = 'http://10.0.2.2:3000/api/v1/sign_up';
+  Map<String, String> headers = {
+    "Accept": "application/json",
+    "Content-type": "application/x-www-form-urlencoded"
+  };
+  Map<String, dynamic> body = {
+    "user[email]": "nmaturana8@uc.cl",
+    "user[password]": "colegio",
+    "user[username]": "nmaturana8",
+    "user[password_confirmation]": "colegio"
+  };
+
+  // make POST request
+  Response response = await post(url,
+      headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
+
+  var respuesta = json.decode(response.body);
+
+  print(respuesta["messages"]);
+}
+*/
 
 void main() => runApp(new MyApp());
 
@@ -178,7 +207,7 @@ class MainScreen extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
