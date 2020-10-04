@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
 
 class Chat extends StatefulWidget {
   final String room;
@@ -58,7 +61,7 @@ class ChatWindow extends State<Chat> with TickerProviderStateMixin {
   Widget build(BuildContext ctx) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Nombre Sala: ${_room}"),
+        title: new Text("Nombre Sala: $_room"),
         elevation: Theme.of(ctx).platform == TargetPlatform.iOS ? 0.0 : 6.0,
       ),
       body: new Column(children: <Widget>[
