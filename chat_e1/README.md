@@ -1,7 +1,7 @@
 # chat_e1
 
 A new Flutter application.
-
+tutorial: https://medium.com/flutter-community/realtime-chat-app-one-to-one-using-flutter-socket-io-node-js-acd4152c6a00
 ## Getting Started
 
 This project is a starting point for a Flutter application.

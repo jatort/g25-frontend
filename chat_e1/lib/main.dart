@@ -2,13 +2,15 @@
 
 import 'dart:convert';
 
+import 'package:chat_e1/AllChatsPage.dart';
+import 'package:chat_e1/ChatModel.dart';
 import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-import 'salas_chat.dart';
 import 'login.dart';
 import 'register.dart';
 
@@ -31,10 +33,10 @@ _signUp() async {
     "Content-type": "application/x-www-form-urlencoded"
   };
   Map<String, dynamic> body = {
-    "user[email]": "nmaturana8@uc.cl",
-    "user[password]": "colegio",
-    "user[username]": "nmaturana8",
-    "user[password_confirmation]": "colegio"
+    "user[email]": "nmaturana8@u          Container(
+            height: double.infinity,
+            child: _signUp(),
+          )]": "colegio"
   };
 
   // make POST request
@@ -52,14 +54,17 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return new MaterialApp(
-      title: "Chat ",
-      theme:
-          defaultTargetPlatform == TargetPlatform.iOS ? iOSTheme : androidTheme,
-      home: MainScreen(),
+    return ScopedModel(
+        model: ChatModel(),
+        child: MaterialApp(
+          title: "Chat ",
+          theme: defaultTargetPlatform == TargetPlatform.iOS
+              ? iOSTheme
+              : androidTheme,
+          home: MainScreen(),
 
-      /// Acá se crea la clase que contiene la lista de los Chat
-    );
+          /// Acá se crea la clase que contiene la lista de los Chat
+        ));
   }
 }
 
@@ -127,6 +132,7 @@ class MainScreen extends StatelessWidget {
     );
   }
 
+/*
   Widget _buildBottonSalasChat(context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -136,7 +142,7 @@ class MainScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ListViewHandelItem()),
+            MaterialPageRoute(builder: (context) => AllChatsPage()),
           );
         },
         padding: EdgeInsets.all(15.0),
@@ -157,7 +163,7 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -203,7 +209,7 @@ class MainScreen extends StatelessWidget {
                   SizedBox(height: 30.0),
                   _buildBottonRegistrarse(context),
                   _buildBottonIniciarSesion(context),
-                  _buildBottonSalasChat(context),
+                  //_buildBottonSalasChat(context),
                 ],
               ),
             ),
