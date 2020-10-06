@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import './ChatPage.dart';
-import './User.dart';
+import './ChatRoom.dart';
 import './ChatModel.dart';
 
 class AllChatsPage extends StatefulWidget {
