@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-
 import './ChatPage.dart';
 import './ChatRoom.dart';
 import './ChatModel.dart';
@@ -30,13 +29,14 @@ class _AllChatsPageState extends State<AllChatsPage> {
   Widget buildAllChatList() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
+        List<ChatRoom> chatrooms = model.getChatRooms();
         return ListView.builder(
-          itemCount: model.chatRoomList.length,
+          itemCount: chatrooms.length,
           itemBuilder: (BuildContext context, int index) {
-            ChatRoom chatroom = model.chatRoomList[index];
+            // ChatRoom chatroom = model.chatRoomList[index];
             return ListTile(
-              title: Text(chatroom.name),
-              onTap: () => chatRoomClicked(chatroom),
+              title: Text(chatrooms[index].name),
+              onTap: () => chatRoomClicked(chatrooms[index]),
             );
           },
         );
