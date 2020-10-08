@@ -46,14 +46,8 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
 
-
-
-
-
-
-
-      ///
-      Container(
+    ///
+    Container(
       alignment: message.senderID == widget.chatroom.chatID
           ? Alignment.centerLeft
           : Alignment.centerRight,
@@ -61,8 +55,10 @@ class _ChatPageState extends State<ChatPage> {
       margin: EdgeInsets.all(10.0),
       child: Text(message.text),
     );
+
     ///
   }
+
   // Widget Beno para username
   Widget _buildUsername() {
     return TextFormField(
@@ -99,7 +95,7 @@ class _ChatPageState extends State<ChatPage> {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
         List<Message> messages =
-        model.getMessagesForChatID(widget.chatroom.name);
+            model.getMessagesForChatID(widget.chatroom.name);
 
         return Container(
           height: MediaQuery.of(context).size.height * 0.75,
@@ -153,8 +149,8 @@ class _ChatPageState extends State<ChatPage> {
                           return;
                         }
                         _formKey.currentState.save();
-                        model.sendMessage(_username,
-                            _message, widget.chatroom.name);
+                        model.sendMessage(
+                            _username, _message, widget.chatroom.name);
                         _formKey.currentState.reset();
                         //_submitMsg(_message, _username);
                       }),
@@ -162,9 +158,11 @@ class _ChatPageState extends State<ChatPage> {
               ),
               decoration: Theme.of(context).platform == TargetPlatform.iOS
                   ? new BoxDecoration(
-                  border: new Border(top: new BorderSide(color: Colors.red)))
+                      border:
+                          new Border(top: new BorderSide(color: Colors.red)))
                   : null),
         );
+
         ///
         return Container(
           child: Row(
@@ -178,8 +176,8 @@ class _ChatPageState extends State<ChatPage> {
               SizedBox(width: 10.0),
               FloatingActionButton(
                 onPressed: () {
-                  model.sendMessage(_username,
-                      textEditingController.text, widget.chatroom.chatID);
+                  model.sendMessage(_username, textEditingController.text,
+                      widget.chatroom.chatID);
                   textEditingController.text = '';
                 },
                 elevation: 0,
@@ -188,6 +186,7 @@ class _ChatPageState extends State<ChatPage> {
             ],
           ),
         );
+
         ///
       },
     );
