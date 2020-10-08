@@ -9,8 +9,12 @@ import './User.dart';
 import './ChatModel.dart';
 
 class AllChatsPage extends StatefulWidget {
+  final Map usuario;
+
+  AllChatsPage(this.usuario);
+
   @override
-  _AllChatsPageState createState() => _AllChatsPageState();
+  _AllChatsPageState createState() => _AllChatsPageState(usuario);
 }
 
 class _AllChatsPageState extends State<AllChatsPage> {
@@ -42,6 +46,10 @@ class _AllChatsPageState extends State<AllChatsPage> {
   }
 }
 
+
+  Map currentUser;
+  _AllChatsPageState(this.currentUser);
+
   @override
   void initState() {
     super.initState();
@@ -65,7 +73,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
         if (_rooms != null){
           _rooms.forEach((room) => model.chatRoomList.add(ChatRoom(room['title'], room['id'].toString())));
         }
-        
+
         return ListView.builder(
           itemCount: model.chatRoomList.length,
           itemBuilder: (BuildContext context, int index) {
