@@ -2,13 +2,15 @@
 
 import 'dart:convert';
 
+import 'package:chat_e1/AllChatsPage.dart';
+import 'package:chat_e1/ChatModel.dart';
 import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-import 'salas_chat.dart';
 import 'login.dart';
 import 'register.dart';
 
@@ -52,14 +54,17 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return new MaterialApp(
-      title: "Chat ",
-      theme:
-          defaultTargetPlatform == TargetPlatform.iOS ? iOSTheme : androidTheme,
-      home: MainScreen(),
+    return ScopedModel(
+        model: ChatModel(),
+        child: MaterialApp(
+          title: "Chat ",
+          theme: defaultTargetPlatform == TargetPlatform.iOS
+              ? iOSTheme
+              : androidTheme,
+          home: MainScreen(),
 
-      /// Acá se crea la clase que contiene la lista de los Chat
-    );
+          /// Acá se crea la clase que contiene la lista de los Chat
+        ));
   }
 }
 
@@ -136,7 +141,7 @@ class MainScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ListViewHandelItem()),
+            MaterialPageRoute(builder: (context) => AllChatsPage()),
           );
         },
         padding: EdgeInsets.all(15.0),
