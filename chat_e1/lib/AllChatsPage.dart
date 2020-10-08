@@ -6,11 +6,17 @@ import './User.dart';
 import './ChatModel.dart';
 
 class AllChatsPage extends StatefulWidget {
+  final Map usuario;
+
+  AllChatsPage(this.usuario);
+
   @override
-  _AllChatsPageState createState() => _AllChatsPageState();
+  _AllChatsPageState createState() => _AllChatsPageState(usuario);
 }
 
 class _AllChatsPageState extends State<AllChatsPage> {
+  Map currentUser;
+  _AllChatsPageState(this.currentUser);
   @override
   void initState() {
     super.initState();
@@ -30,6 +36,8 @@ class _AllChatsPageState extends State<AllChatsPage> {
   Widget buildAllChatList() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
+        print(
+            "Nombre de usuario en las salas de Chat: ${currentUser['data']['user']}");
         return ListView.builder(
           itemCount: model.chatRoomList.length,
           itemBuilder: (BuildContext context, int index) {

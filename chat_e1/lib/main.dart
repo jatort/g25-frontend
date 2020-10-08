@@ -33,10 +33,10 @@ _signUp() async {
     "Content-type": "application/x-www-form-urlencoded"
   };
   Map<String, dynamic> body = {
-    "user[email]": "nmaturana8@uc.cl",
-    "user[password]": "colegio",
-    "user[username]": "nmaturana8",
-    "user[password_confirmation]": "colegio"
+    "user[email]": "nmaturana8@u          Container(
+            height: double.infinity,
+            child: _signUp(),
+          )]": "colegio"
   };
 
   // make POST request
@@ -132,6 +132,7 @@ class MainScreen extends StatelessWidget {
     );
   }
 
+/*
   Widget _buildBottonSalasChat(context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -162,7 +163,7 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -197,7 +198,7 @@ class MainScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Sing In',
+                    'Bienvenido',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'OpenSans',
@@ -208,7 +209,7 @@ class MainScreen extends StatelessWidget {
                   SizedBox(height: 30.0),
                   _buildBottonRegistrarse(context),
                   _buildBottonIniciarSesion(context),
-                  _buildBottonSalasChat(context),
+                  //_buildBottonSalasChat(context),
                 ],
               ),
             ),
