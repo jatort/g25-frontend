@@ -198,7 +198,7 @@ class MainScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Sing In',
+                    'Bienvenido',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'OpenSans',

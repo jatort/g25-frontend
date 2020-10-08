@@ -27,7 +27,7 @@ class Login extends State<LoginScreen> {
   }
 
   Future _signIn(Map<String, String> datosUsuario) async {
-    String url = 'http://10.0.2.2:3000/api/v1/sign_in';
+    String url = 'http://34.229.56.163/api/v1/sign_in';
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"
@@ -125,6 +125,8 @@ class Login extends State<LoginScreen> {
                   };
 
                   var respuestaUsuario = await _signIn(datosUsuario);
+
+                  _formKey.currentState.reset();
 
                   if (respuestaUsuario['is_success']) {
                     Navigator.push(

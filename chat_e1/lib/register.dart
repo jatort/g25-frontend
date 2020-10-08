@@ -31,7 +31,7 @@ class Register extends State<RegisterScreen> {
   }
 
   Future _signUp(Map<String, String> datosUsuario) async {
-    String url = 'http://10.0.2.2:3000/api/v1/sign_up';
+    String url = 'http://34.229.56.163/api/v1/sign_up';
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"
@@ -171,6 +171,8 @@ class Register extends State<RegisterScreen> {
                   };
 
                   var respuestaUsuario = await _signUp(datosUsuario);
+
+                  _formKey.currentState.reset();
 
                   if (respuestaUsuario['is_success']) {
                     Navigator.push(
