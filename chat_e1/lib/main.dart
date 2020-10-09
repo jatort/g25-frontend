@@ -1,9 +1,14 @@
+// ignore: avoid_web_libraries_in_flutter
+
+import 'dart:convert';
+
 import 'package:chat_e1/AllChatsPage.dart';
 import 'package:chat_e1/ChatModel.dart';
 import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'login.dart';
@@ -20,22 +25,46 @@ final ThemeData androidTheme = new ThemeData(
   accentColor: Colors.green,
 );
 
+/*
+_signUp() async {
+  String url = 'http://10.0.2.2:3000/api/v1/sign_up';
+  Map<String, String> headers = {
+    "Accept": "application/json",
+    "Content-type": "application/x-www-form-urlencoded"
+  };
+  Map<String, dynamic> body = {
+    "user[email]": "nmaturana8@u          Container(
+            height: double.infinity,
+            child: _signUp(),
+          )]": "colegio"
+  };
+
+  // make POST request
+  Response response = await post(url,
+      headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
+
+  var respuesta = json.decode(response.body);
+
+  print(respuesta["messages"]);
+}
+*/
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return ScopedModel(
-     model: ChatModel(),
-     child: MaterialApp(
-      title: "Chat ",
-      theme:
-          defaultTargetPlatform == TargetPlatform.iOS ? iOSTheme : androidTheme,
-      home: MainScreen(),
+        model: ChatModel(),
+        child: MaterialApp(
+          title: "Chat ",
+          theme: defaultTargetPlatform == TargetPlatform.iOS
+              ? iOSTheme
+              : androidTheme,
+          home: MainScreen(),
 
-      /// Acá se crea la clase que contiene la lista de los Chat
-     )
-    );
+          /// Acá se crea la clase que contiene la lista de los Chat
+        ));
   }
 }
 
@@ -103,6 +132,7 @@ class MainScreen extends StatelessWidget {
     );
   }
 
+/*
   Widget _buildBottonSalasChat(context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -133,7 +163,7 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -168,7 +198,7 @@ class MainScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Sing In',
+                    'Bienvenido',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'OpenSans',
@@ -179,11 +209,11 @@ class MainScreen extends StatelessWidget {
                   SizedBox(height: 30.0),
                   _buildBottonRegistrarse(context),
                   _buildBottonIniciarSesion(context),
-                  _buildBottonSalasChat(context),
+                  //_buildBottonSalasChat(context),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

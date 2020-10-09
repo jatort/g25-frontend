@@ -2,13 +2,36 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import './ChatRoom.dart';
 import './Message.dart';
 
 class ChatModel extends Model {
-  // ignore: todo
-  // TODO Estas chatrooms se tendrán que reemplazar con las que estén guardadas en la base de datos, **se debe hacer request**
+
+  String data;
+  var _respuesta;
+
+  Future<String> getJsonData() async {
+
+    final token = "2iO2NMu-Iw-QU0G_BwZZUg";
+    String url = 'http://192.168.0.7:3000/api/v1/chats';
+    Map<String, String> headers = {"Accept": "application/json", "Content-type": "application/x-www-form-urlencoded", HttpHeaders.authorizationHeader: "Bearer $token",};
+    Map<String, dynamic> body = {"user[email]": "nmaturana7@uc.cl", "user[password]": "colegio", "user[username]": "nmaturana7", "user[password_confirmation]": "colegio"};
+    //Map<String, dynamic> body = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
+    //var json = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
+
+    final response = await http.get(url,  headers: headers);
+    //print(response.body);
+    if (response.statusCode == 200) {
+      var convertDataToJson = json.decode(response.body);
+      data = convertDataToJson['messages'];
+    }
+    
+
+    return "Success";
+}
   List<ChatRoom> chatrooms = [
     ChatRoom('IronMan', '111'),
     ChatRoom('Captain America', '222'),
@@ -23,7 +46,7 @@ class ChatModel extends Model {
   SocketIO socketIO;
 
   void init() {
-    currentUser = "Juan";
+    currentUser = "Oscar";
     chatRoomList = chatrooms.toList();
 
     socketIO =

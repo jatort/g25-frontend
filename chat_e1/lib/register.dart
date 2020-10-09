@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:chat_e1/AllChatsPage.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 // ignore: must_be_immutable
 
@@ -15,8 +19,40 @@ class Register extends State<RegisterScreen> {
   String _password;
   String _confirmpassword;
   String _currentpassword;
+  String messageNotice = "";
+  Map<String, dynamic> data;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    data = {};
+  }
+
+  Future _signUp(Map<String, String> datosUsuario) async {
+    String url = 'http://34.229.56.163/api/v1/sign_up';
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Content-type": "application/x-www-form-urlencoded"
+    };
+    Map<String, dynamic> body = {
+      "user[email]": datosUsuario['email'],
+      "user[password]": datosUsuario['password'],
+      "user[username]": datosUsuario['username'],
+      "user[password_confirmation]": datosUsuario['password_confirmation']
+    };
+    // make POST request
+    Response response = await post(url,
+        headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
+
+    var respuesta = json.decode(response.body);
+    if (response.statusCode == 200) {
+      return respuesta;
+    } else {
+      return respuesta;
+    }
+  }
 
   Widget _buildUsername() {
     return TextFormField(
@@ -105,7 +141,7 @@ class Register extends State<RegisterScreen> {
         title: Text("Registro Usuario"),
       ),
       body: Container(
-        margin: EdgeInsets.all(24),
+        margin: EdgeInsets.all(40),
         child: Form(
           key: _formKey,
           child: Column(
@@ -115,25 +151,49 @@ class Register extends State<RegisterScreen> {
               _buildEmail(),
               _buildPassword(),
               _buildConfirmPassword(),
-              SizedBox(height: 100),
+              SizedBox(height: 50),
               RaisedButton(
                 child: Text(
                   "Registrarse",
                   style: TextStyle(color: Colors.blue, fontSize: 16),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (!_formKey.currentState.validate()) {
                     return;
                   }
 
                   _formKey.currentState.save();
+                  Map<String, String> datosUsuario = {
+                    "email": _email,
+                    "password": _password,
+                    "username": _username,
+                    "password_confirmation": _confirmpassword
+                  };
 
-                  print(_username);
-                  print(_email);
-                  print(_password);
-                  print(_confirmpassword);
+                  var respuestaUsuario = await _signUp(datosUsuario);
+
+                  _formKey.currentState.reset();
+
+                  if (respuestaUsuario['is_success']) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return AllChatsPage(respuestaUsuario);
+                        },
+                      ),
+                    );
+                  } else {
+                    setState(() {
+                      messageNotice = "Ocurrio un error al guardar el usuario";
+                    });
+                  }
                 },
-              )
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(messageNotice),
             ],
           ),
         ),
