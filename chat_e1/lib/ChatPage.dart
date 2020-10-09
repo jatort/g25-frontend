@@ -1,5 +1,11 @@
+import 'dart:core';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import './User.dart';
 import './Message.dart';
@@ -7,16 +13,67 @@ import './ChatModel.dart';
 
 class ChatPage extends StatefulWidget {
   final ChatRoom chatroom;
-  ChatPage(this.chatroom);
+  final Map currentUser;
+  ChatPage(this.chatroom, this.currentUser);
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _ChatPageState createState() => _ChatPageState(chatroom, currentUser);
 }
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController textEditingController = TextEditingController();
   String _message;
-  String _username;
+  ChatRoom chatroom;
+  Map currentUser;
+
+  _ChatPageState(this.chatroom, this.currentUser);
+
+  //String _username;
+
+  String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
+  String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
+  List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    _getMessagesFromApi().then((value) => {
+          _messagesApi = value,
+        });
+    super.initState();
+  }
+
+  Future _getMessagesFromApi() async {
+    String idChat = chatroom.chatID;
+    String token = currentUser['data']['user']['auth_token'];
+    String url = "$url_api_server/$idChat";
+    print(url);
+    print(token);
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Content-type": "application/x-www-form-urlencoded",
+      HttpHeaders.authorizationHeader: "Bearer $token",
+    };
+    final response = await http.get(url, headers: headers);
+    var convertDataToJson = json.decode(response.body);
+
+    var messagesApi = convertDataToJson['data']['messages'];
+
+    print(messagesApi);
+
+    List msgApi = [];
+
+    if (messagesApi != null) {
+      messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
+          mensaje['user_id'].toString(), mensaje['chat_id'].toString())));
+    }
+    print(msgApi);
+    return msgApi;
+  }
+
+  //aqui movi la funcion del chatmodel para aca, convierte la lista de mensajes
+  //a objetos Messages
+
+  //Api obtiene los mensajes de la sala de chat
 
   Widget buildSingleMessage(Message message) {
     return Container(
@@ -60,21 +117,6 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Widget Beno para username
-  Widget _buildUsername() {
-    return TextFormField(
-      decoration: InputDecoration(labelText: "Username"),
-      // ignore: missing_return
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Username is Required";
-        }
-      },
-      onSaved: (String value) {
-        _username = value;
-      },
-    );
-  }
-
   // Widget Beno para Message
   Widget _buildMessage() {
     return TextFormField(
@@ -92,17 +134,24 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget buildChatList() {
+    print('entrando a build....');
+    print("_messageApi en el buildchatlist: $_messagesApi");
+    //print(_messagesApi);
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
-        List<Message> messages =
-            model.getMessagesForChatID(widget.chatroom.name);
+        List<Message> messagesFromSocket =
+            model.getMessagesForChatID(widget.chatroom.chatID);
+
+        _messagesApi.forEach((element) {
+          messagesFromSocket.insert(0, element);
+        });
 
         return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
+          height: MediaQuery.of(context).size.height * 0.65,
           child: ListView.builder(
-            itemCount: messages.length,
+            itemCount: messagesFromSocket.length,
             itemBuilder: (BuildContext context, int index) {
-              return buildSingleMessage(messages[index]);
+              return buildSingleMessage(messagesFromSocket[index]);
             },
           ),
         );
@@ -128,7 +177,6 @@ class _ChatPageState extends State<ChatPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          _buildUsername(),
                           _buildMessage(),
                         ],
                       ),
@@ -149,8 +197,13 @@ class _ChatPageState extends State<ChatPage> {
                           return;
                         }
                         _formKey.currentState.save();
+                        String _username =
+                            widget.currentUser['data']['user']['username'];
                         model.sendMessage(
-                            _username, _message, widget.chatroom.name);
+                            _username,
+                            _message,
+                            widget.chatroom.chatID,
+                            widget.currentUser['data']['user']['auth_token']);
                         _formKey.currentState.reset();
                         //_submitMsg(_message, _username);
                       }),
@@ -176,8 +229,13 @@ class _ChatPageState extends State<ChatPage> {
               SizedBox(width: 10.0),
               FloatingActionButton(
                 onPressed: () {
-                  model.sendMessage(_username, textEditingController.text,
-                      widget.chatroom.chatID);
+                  String _username =
+                      widget.currentUser['data']['user']['username'];
+                  model.sendMessage(
+                      _username,
+                      textEditingController.text,
+                      widget.chatroom.chatID,
+                      widget.currentUser['data']['user']['auth_token']);
                   textEditingController.text = '';
                 },
                 elevation: 0,
@@ -194,12 +252,44 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _getMessagesFromApi(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          // Future hasn't finished yet, return a placeholder
+          return Text('Loading');
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Nombre sala: ${widget.chatroom.name}"),
+            elevation:
+                Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
+          ),
+          body: Column(
+            children: <Widget>[
+              buildChatList(),
+              new Divider(height: 1.0),
+              new Container(
+                child: buildChatArea(),
+                decoration: new BoxDecoration(color: Colors.white),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/*
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Nombre sala: ${widget.chatroom.name}"),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
           buildChatList(),
           new Divider(height: 1.0),
@@ -212,3 +302,4 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
+*/
