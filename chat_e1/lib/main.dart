@@ -8,6 +8,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'login.dart';
 import 'register.dart';
+import 'Images.dart';
 
 final ThemeData iOSTheme = new ThemeData(
   primarySwatch: Colors.blue,
@@ -134,6 +135,37 @@ class MainScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildBottonUploadImage(context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Images()),
+          );
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'Test Imagen',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -180,6 +212,7 @@ class MainScreen extends StatelessWidget {
                   _buildBottonRegistrarse(context),
                   _buildBottonIniciarSesion(context),
                   _buildBottonSalasChat(context),
+                  _buildBottonUploadImage(context),
                 ],
               ),
             ),
