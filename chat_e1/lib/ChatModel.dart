@@ -14,11 +14,12 @@ class ChatModel extends Model {
   var _respuesta;
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
   List _messagesApi;
 
   Future<String> getJsonData() async {
     final token = "2iO2NMu-Iw-QU0G_BwZZUg";
-    String url = 'http://192.168.0.7:3000/api/v1/chats';
+    String url = url_api_server_nuevo;
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded",
@@ -43,12 +44,13 @@ class ChatModel extends Model {
     return "Success";
   }
 
-  Future<String> _sendMessageToApi(
-      String idChat, String token, String mensaje) async {
-    String url = "$url_api_server/$idChat/messages";
+  Future _sendMessageToApi(String idChat, String token, String mensaje) async {
+    String url = "$url_api_server_nuevo/$idChat/messages";
+    print(url);
     Map<String, String> headers = {
       "Accept": "application/json",
-      "Content-type": "application/x-www-form-urlencoded"
+      "Content-type": "application/x-www-form-urlencoded",
+      HttpHeaders.authorizationHeader: "Bearer $token",
     };
     Map<String, dynamic> body = {"message[body]": mensaje};
 
@@ -60,13 +62,7 @@ class ChatModel extends Model {
     return respuesta;
   }
 
-  List<ChatRoom> chatrooms = [
-    ChatRoom('IronMan', '111'),
-    ChatRoom('Captain America', '222'),
-    ChatRoom('Antman', '333'),
-    ChatRoom('Hulk', '444'),
-    ChatRoom('Thor', '555'),
-  ];
+  List<ChatRoom> chatrooms = [];
 
   String currentUser;
   List<ChatRoom> chatRoomList = List<ChatRoom>();
@@ -74,7 +70,7 @@ class ChatModel extends Model {
   SocketIO socketIO;
 
   void init() {
-    currentUser = "Oscar";
+    //currentUser = "Oscar";
     chatRoomList = chatrooms.toList();
 
     socketIO = SocketIOManager()
@@ -92,14 +88,16 @@ class ChatModel extends Model {
   }
 
   void sendMessage(
-      String username, String text, String receiverChatID, String token) {
-    messages.add(Message(text, currentUser, receiverChatID));
-    //var respuesta = _sendMessageToApi(receiverChatID, token, text);
+      String username, String text, String receiverChatID, String token) async {
+    var respuesta = await _sendMessageToApi(receiverChatID, token, text);
+    print('Username en sendMessage: $username');
+    print("RESPUESTA DEL POST: $respuesta");
+    messages.add(Message(text, username, receiverChatID));
     socketIO.sendMessage(
       'send_message',
       json.encode({
         'receiverChatID': receiverChatID,
-        'senderChatID': currentUser,
+        'senderChatID': username,
         'content': text,
       }),
     );

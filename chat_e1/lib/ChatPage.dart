@@ -31,6 +31,7 @@ class _ChatPageState extends State<ChatPage> {
 
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
   List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -45,7 +46,7 @@ class _ChatPageState extends State<ChatPage> {
   Future _getMessagesFromApi() async {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
-    String url = "$url_api_server/$idChat";
+    String url = "$url_api_server_nuevo/$idChat";
     print(url);
     print(token);
     Map<String, String> headers = {
@@ -64,7 +65,7 @@ class _ChatPageState extends State<ChatPage> {
 
     if (messagesApi != null) {
       messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
-          mensaje['user_id'].toString(), mensaje['chat_id'].toString())));
+          mensaje['username'], mensaje['chat_id'].toString())));
     }
     print(msgApi);
     return msgApi;
@@ -135,23 +136,25 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildChatList() {
     print('entrando a build....');
-    print("_messageApi en el buildchatlist: $_messagesApi");
+    print("_messageApi en el BUILDCHATLIST: $_messagesApi");
     //print(_messagesApi);
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
         List<Message> messagesFromSocket =
             model.getMessagesForChatID(widget.chatroom.chatID);
-
+        List<Message> messagesOrder = [];
         _messagesApi.forEach((element) {
-          messagesFromSocket.insert(0, element);
+          messagesOrder.add(element);
         });
-
+        messagesFromSocket.forEach((element) {
+          messagesOrder.add(element);
+        });
         return Container(
           height: MediaQuery.of(context).size.height * 0.65,
           child: ListView.builder(
-            itemCount: messagesFromSocket.length,
+            itemCount: messagesOrder.length,
             itemBuilder: (BuildContext context, int index) {
-              return buildSingleMessage(messagesFromSocket[index]);
+              return buildSingleMessage(messagesOrder[index]);
             },
           ),
         );

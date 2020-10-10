@@ -23,10 +23,11 @@ class _AllChatsPageState extends State<AllChatsPage> {
   _AllChatsPageState(this.currentUser);
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
 
   Future<String> fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
-    String url = url_api_server;
+    String url = url_api_server_nuevo;
 
     Map<String, String> headers = {
       "Accept": "application/json",
