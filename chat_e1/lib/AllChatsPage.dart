@@ -3,9 +3,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-
 import './ChatPage.dart';
-import './User.dart';
+import './ChatRoom.dart';
 import './ChatModel.dart';
 
 class AllChatsPage extends StatefulWidget {
@@ -18,6 +17,13 @@ class AllChatsPage extends StatefulWidget {
 }
 
 class _AllChatsPageState extends State<AllChatsPage> {
+
+  String _newChatRoom;
+
+  final nameChatController = TextEditingController(
+    text: "",
+  );
+
   List _rooms;
   Map currentUser;
   _AllChatsPageState(this.currentUser);
@@ -77,16 +83,41 @@ class _AllChatsPageState extends State<AllChatsPage> {
               .add(ChatRoom(room['title'], room['id'].toString())));
         }
 
-        return ListView.builder(
-          itemCount: model.chatRoomList.length,
-          itemBuilder: (BuildContext context, int index) {
-            ChatRoom chatroom = model.chatRoomList[index];
-            return ListTile(
-              title: Text(chatroom.name),
-              onTap: () => chatRoomClicked(chatroom),
-            );
-          },
+        List<ChatRoom> chatrooms = model.getChatRooms();
+        
+        return Column(
+          children: [
+            Expanded(
+              flex: 5,
+              child: ListView.builder(
+                itemCount: chatrooms.length,
+                itemBuilder: (BuildContext context, int index) {
+                  // ChatRoom chatroom = model.chatRoomList[index];
+                  return ListTile(
+                    title: Text(chatrooms[index].name),
+                    onTap: () => chatRoomClicked(chatrooms[index]),
+                  );
+                },
+              ),
+            ),
+            Expanded(flex: 1, child: _buildNewChatroomForm()),
+          ],
         );
+      },
+    );
+  }
+
+  Widget _buildRoomForm() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: "Message"),
+      // ignore: missing_return
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Message is Required";
+        }
+      },
+      onSaved: (String value) {
+        _newChatRoom = value;
       },
     );
   }
@@ -99,5 +130,53 @@ class _AllChatsPageState extends State<AllChatsPage> {
       ),
       body: buildAllChatList(),
     );
+  }
+
+  Widget _buildNewChatroomForm() {
+    return ScopedModelDescendant<ChatModel>(builder: (context, child, model) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Row(
+          children: <Widget>[
+            Text("Chat Name:"),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  controller: nameChatController,
+                  onSubmitted: (text) {
+                    setState(() {
+                      if (nameChatController.text != "") {
+                        model.sendRoom(
+                            nameChatController.text, nameChatController.text);
+                      }
+                    });
+                    nameChatController.clear();
+                  },
+                ),
+              ),
+            ),
+            RaisedButton(
+              child: new Text(
+                "New Chat Room",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              color: Colors.green,
+              onPressed: () {
+                setState(() {
+                  if (nameChatController.text != "") {
+                    model.sendRoom(
+                        nameChatController.text, nameChatController.text);
+                  }
+                });
+                nameChatController.clear();
+              },
+            )
+          ],
+        ),
+      );
+    });
   }
 }

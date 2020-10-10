@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -200,6 +201,7 @@ class _ChatPageState extends State<ChatPage> {
                           return;
                         }
                         _formKey.currentState.save();
+                        
                         String _username =
                             widget.currentUser['data']['user']['username'];
                         model.sendMessage(
@@ -232,6 +234,7 @@ class _ChatPageState extends State<ChatPage> {
               SizedBox(width: 10.0),
               FloatingActionButton(
                 onPressed: () {
+
                   String _username =
                       widget.currentUser['data']['user']['username'];
                   model.sendMessage(
@@ -239,6 +242,7 @@ class _ChatPageState extends State<ChatPage> {
                       textEditingController.text,
                       widget.chatroom.chatID,
                       widget.currentUser['data']['user']['auth_token']);
+
                   textEditingController.text = '';
                 },
                 elevation: 0,
