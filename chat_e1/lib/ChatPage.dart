@@ -40,12 +40,14 @@ class _ChatPageState extends State<ChatPage> {
           _messagesApi = value,
         });
     super.initState();
+    
   }
 
   Future _getMessagesFromApi() async {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
-    String url = "$url_api_server/$idChat";
+    //String url = "$url_api_server/$idChat";
+    String url = 'http://192.168.0.7/api/v1/chats/$idChat';
     print(url);
     print(token);
     Map<String, String> headers = {

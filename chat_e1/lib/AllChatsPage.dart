@@ -26,7 +26,8 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
   Future<String> fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
-    String url = url_api_server;
+    //String url = url_api_server;
+    String url = 'http://192.168.0.7/api/v1/chats';
 
     Map<String, String> headers = {
       "Accept": "application/json",
@@ -53,6 +54,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
   @override
   void initState() {
+    print("AQUIIIIIIIII$currentUser");
     super.initState();
     ScopedModel.of<ChatModel>(context, rebuildOnChange: false).init();
     fetchRooms();
