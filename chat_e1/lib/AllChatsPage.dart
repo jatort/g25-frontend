@@ -9,41 +9,52 @@ import './User.dart';
 import './ChatModel.dart';
 
 class AllChatsPage extends StatefulWidget {
+  final Map usuario;
+
+  AllChatsPage(this.usuario);
+
   @override
-  _AllChatsPageState createState() => _AllChatsPageState();
+  _AllChatsPageState createState() => _AllChatsPageState(usuario);
 }
 
 class _AllChatsPageState extends State<AllChatsPage> {
-
   List _rooms;
+  Map currentUser;
+  _AllChatsPageState(this.currentUser);
+  String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
+  String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
 
   Future<String> fetchRooms() async {
+    final token = currentUser['data']['user']['auth_token'];
+    //String url = url_api_server;
+    String url = 'http://192.168.0.7/api/v1/chats';
 
-  final token = "2iO2NMu-Iw-QU0G_BwZZUg";
-  String url = 'http://192.168.0.7:3000/api/v1/chats';
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Content-type": "application/x-www-form-urlencoded",
+      HttpHeaders.authorizationHeader: "Bearer $token",
+    };
+    //Map<String, dynamic> body = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
+    //var json = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
 
-  Map<String, String> headers = {"Accept": "application/json", "Content-type": "application/x-www-form-urlencoded", HttpHeaders.authorizationHeader: "Bearer $token",};
-  Map<String, dynamic> body = {"user[email]": "nmaturana7@uc.cl", "user[password]": "colegio", "user[username]": "nmaturana7", "user[password_confirmation]": "colegio"};
-  //Map<String, dynamic> body = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
-  //var json = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
+    final response = await http.get(url, headers: headers);
 
-  final response = await http.get(url,  headers: headers);
+    setState(() {
+      var convertDataToJson = json.decode(response.body);
+      print(convertDataToJson);
+      _rooms = convertDataToJson['data']['chats'];
+    });
 
-  setState((){
-    var convertDataToJson = json.decode(response.body);
-    print(convertDataToJson);
-    _rooms = convertDataToJson['data']['chats'];
-  });
-
-  if (response.statusCode == 200) {
-    return 'success';
-  } else {
-    throw Exception('Failed to load chat rooms');
+    if (response.statusCode == 200) {
+      return 'success';
+    } else {
+      throw Exception('Failed to load chat rooms');
+    }
   }
-}
 
   @override
   void initState() {
+    print("AQUIIIIIIIII$currentUser");
     super.initState();
     ScopedModel.of<ChatModel>(context, rebuildOnChange: false).init();
     fetchRooms();
@@ -53,7 +64,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return ChatPage(chatroom);
+          return new ChatPage(chatroom, currentUser);
         },
       ),
     );
@@ -62,10 +73,11 @@ class _AllChatsPageState extends State<AllChatsPage> {
   Widget buildAllChatList() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
-        if (_rooms != null){
-          _rooms.forEach((room) => model.chatRoomList.add(ChatRoom(room['title'], room['id'].toString())));
+        if (_rooms != null) {
+          _rooms.forEach((room) => model.chatRoomList
+              .add(ChatRoom(room['title'], room['id'].toString())));
         }
-        
+
         return ListView.builder(
           itemCount: model.chatRoomList.length,
           itemBuilder: (BuildContext context, int index) {
