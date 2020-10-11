@@ -19,7 +19,7 @@ class ChatModel extends Model {
   Future<String> _sendMessageToApi(
       String idChat, String token, String mensaje) async {
     //String url = "$url_api_server/$idChat/messages";
-    String url = 'http://192.168.0.11/api/v1/chats/$idChat/messages';
+    String url = 'http://192.168.1.87/api/v1/chats/$idChat/messages';
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"

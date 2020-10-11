@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
     //String url = "$url_api_server/$idChat";
-    String url = 'http://192.168.0.11/api/v1/chats/$idChat';
+    String url = 'http://192.168.1.87/api/v1/chats/$idChat';
     print(url);
     print(token);
     Map<String, String> headers = {
@@ -80,6 +80,35 @@ class _ChatPageState extends State<ChatPage> {
   //Api obtiene los mensajes de la sala de chat
 
   Widget buildSingleMessage(Message message) {
+    if (message.text.substring(0, 4) == 'http'){
+      return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Container(margin: const EdgeInsets.only(right: 18.0)),
+          new Expanded(
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text('${message.senderID}:   [${new DateTime.now()}]'),
+                new Container(
+                  margin: const EdgeInsets.only(top: 6.0),
+                  child: new Image.network(message.text, width: 350,),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      color: Colors.indigo[100],
+      padding: EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 0,
+      ),
+    );
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: new Row(
@@ -162,12 +191,14 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
+  var _result;
   _navigateUploadImage(BuildContext context) async {
-    final result = await Navigator.push(
+    _result = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Images()),
           );
-    print(result);
+    //print(_result);
+    
   }
   Widget buildChatArea() {
     return ScopedModelDescendant<ChatModel>(
@@ -203,8 +234,20 @@ class _ChatPageState extends State<ChatPage> {
                               MaterialIcons.add_a_photo,
                               size: 35,
                             ),
-                          onPressed: () {
-                            _navigateUploadImage(context);
+                          onPressed: () async{
+                            await _navigateUploadImage(context);
+                            // Se recorre la lista de imagenes y se envia un mensaje por cada url
+                            if (_result != null){
+                              String _username =
+                                widget.currentUser['data']['user']['username'];
+                              _result.forEach((image) => 
+                              model.sendMessage(
+                                _username,
+                                image,
+                                widget.chatroom.chatID,
+                                widget.currentUser['data']['user']['auth_token'])
+                              );
+                            }                             
                           }),
                       new Spacer(),
                       RaisedButton(
