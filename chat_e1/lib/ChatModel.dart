@@ -90,16 +90,15 @@ class ChatModel extends Model {
       notifyListeners();
     });
 
-    socketIO.connect();
-  }
-
-  String containsA(String text) {
-    var wordList = text.split(" ");
-    wordList.forEach((element) {
-      if (element[0] == "@") {
-        return element.substring(1);
-      }
+    socketIO.subscribe('receive_notification', (jsonData) {
+      print("recibida");
+      Map<String, dynamic> data = json.decode(jsonData);
+      messages.add(Message(
+          data['content'], data['senderChatID'], data['receiverChatID']));
+      notifyListeners();
     });
+
+    socketIO.connect();
   }
 
   void sendMessage(
@@ -108,8 +107,26 @@ class ChatModel extends Model {
     String receiverChatID,
     String token,
   ) async {
-    if (containsA(text).isNotEmpty) {
-      print("FUNCIONANDO ARROBA");
+    String user = "null";
+    final textList = text.split(" ");
+    textList.forEach((element) {
+      if (element[0] == "@") {
+        user = element.substring(1);
+      }
+    });
+    if (user != "null") {
+      print("FUNCIONANDO ARROBA adsfkjllllllllllllllllñjfdlksafsfajdlksfja");
+      messages.add(Message(text, username, receiverChatID));
+      socketIO.sendMessage(
+        'send_notification',
+        json.encode({
+          'receiverChatID': receiverChatID,
+          'senderChatID': username,
+          'content': text,
+          'privateUser': user,
+        }),
+      );
+      notifyListeners();
     } else {
       var respuesta = await _sendMessageToApi(receiverChatID, token, text);
       print('Username en sendMessage: $username');

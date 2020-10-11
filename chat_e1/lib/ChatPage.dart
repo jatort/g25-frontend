@@ -8,7 +8,7 @@ import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import './User.dart';
+// import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
 
@@ -201,7 +201,7 @@ class _ChatPageState extends State<ChatPage> {
                           return;
                         }
                         _formKey.currentState.save();
-                        
+
                         String _username =
                             widget.currentUser['data']['user']['username'];
                         model.sendMessage(
@@ -234,7 +234,6 @@ class _ChatPageState extends State<ChatPage> {
               SizedBox(width: 10.0),
               FloatingActionButton(
                 onPressed: () {
-
                   String _username =
                       widget.currentUser['data']['user']['username'];
                   model.sendMessage(
