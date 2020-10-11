@@ -8,7 +8,6 @@ import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
 

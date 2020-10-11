@@ -96,18 +96,42 @@ class ChatModel extends Model {
 
   void sendMessage(
       String username, String text, String receiverChatID, String token) async {
-    var respuesta = await _sendMessageToApi(receiverChatID, token, text);
-    print('Username en sendMessage: $username');
-    print("RESPUESTA DEL POST: $respuesta");
-    messages.add(Message(text, username, receiverChatID));
-    socketIO.sendMessage(
-      'send_message',
-      json.encode({
-        'receiverChatID': receiverChatID,
-        'senderChatID': username,
-        'content': text,
-      }),
-    );
+
+    String user =  "null";
+    final msg_separate = text.split(" ");
+    msg_separate.forEach((element) {
+      if(element[0] == "@")
+      {
+        user = element.substring(1, element.length + 1);
+      }
+    });
+
+    if(user != "null")
+      {
+          socketIO.sendMessage("send_notification",{
+            json.encode({
+              'receiverChatID': receiverChatID,
+              'senderChatID': username,
+              'content': text,
+              'privateName': user,
+            })
+          });
+          messages.add(Message(text, username, receiverChatID));
+      }
+    else {
+      var respuesta = await _sendMessageToApi(receiverChatID, token, text);
+      print('Username en sendMessage: $username');
+      print("RESPUESTA DEL POST: $respuesta");
+      messages.add(Message(text, username, receiverChatID));
+      socketIO.sendMessage(
+        'send_message',
+        json.encode({
+          'receiverChatID': receiverChatID,
+          'senderChatID': username,
+          'content': text,
+        }),
+      );
+    }
     notifyListeners();
   }
 
@@ -124,7 +148,27 @@ class ChatModel extends Model {
   }
 
   List<Message> getMessagesForChatID(String chatID) {
-    return messages.where((msg) => msg.receiverID == chatID).toList();
+    List<Message> msgs = List<Message>();
+    messages.forEach((element) {
+
+      final msgSeparate = element.text.split(" ");
+
+      msgSeparate.forEach((msg) {
+        if(msg[0] == "@")
+        {
+          if(element.senderID == currentUser)
+          {
+             msgs.add(element);
+          }
+        }
+        else
+          {
+            msgs.add(element);
+          }
+
+      });
+    });
+    return msgs.where((msg) => msg.receiverID == chatID).toList();
   }
 
   List<ChatRoom> getChatRooms() {
