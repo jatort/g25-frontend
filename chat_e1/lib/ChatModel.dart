@@ -10,7 +10,6 @@ import './ChatRoom.dart';
 import './Message.dart';
 
 class ChatModel extends Model {
-
   String data;
   var _respuesta;
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
@@ -94,21 +93,38 @@ class ChatModel extends Model {
     socketIO.connect();
   }
 
+  String containsA(String text) {
+    var wordList = text.split(" ");
+    wordList.forEach((element) {
+      if (element[0] == "@") {
+        return element.substring(1);
+      }
+    });
+  }
+
   void sendMessage(
-      String username, String text, String receiverChatID, String token) async {
-    var respuesta = await _sendMessageToApi(receiverChatID, token, text);
-    print('Username en sendMessage: $username');
-    print("RESPUESTA DEL POST: $respuesta");
-    messages.add(Message(text, username, receiverChatID));
-    socketIO.sendMessage(
-      'send_message',
-      json.encode({
-        'receiverChatID': receiverChatID,
-        'senderChatID': username,
-        'content': text,
-      }),
-    );
-    notifyListeners();
+    String username,
+    String text,
+    String receiverChatID,
+    String token,
+  ) async {
+    if (containsA(text).isNotEmpty) {
+      print("FUNCIONANDO ARROBA");
+    } else {
+      var respuesta = await _sendMessageToApi(receiverChatID, token, text);
+      print('Username en sendMessage: $username');
+      print("RESPUESTA DEL POST: $respuesta");
+      messages.add(Message(text, username, receiverChatID));
+      socketIO.sendMessage(
+        'send_message',
+        json.encode({
+          'receiverChatID': receiverChatID,
+          'senderChatID': username,
+          'content': text,
+        }),
+      );
+      notifyListeners();
+    }
   }
 
   void sendRoom(String name, String chatID) {
