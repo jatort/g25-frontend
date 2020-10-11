@@ -7,8 +7,6 @@ import 'package:scoped_model/scoped_model.dart';
 import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
 
@@ -64,10 +62,10 @@ class _ChatPageState extends State<ChatPage> {
 
     List msgApi = [];
 
-    if (messagesApi != null) {
-      messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
-          mensaje['username'], mensaje['chat_id'].toString())));
-    }
+    //if (messagesApi != null) {
+     // messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
+      //    mensaje['username'], mensaje['chat_id'].toString())));
+    //}
     print(msgApi);
     return msgApi;
   }
@@ -201,7 +199,7 @@ class _ChatPageState extends State<ChatPage> {
                           return;
                         }
                         _formKey.currentState.save();
-                        
+                        model.currentUser = widget.currentUser['data']['user']['username'];
                         String _username =
                             widget.currentUser['data']['user']['username'];
                         model.sendMessage(

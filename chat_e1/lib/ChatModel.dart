@@ -71,17 +71,28 @@ class ChatModel extends Model {
   SocketIO socketIO;
 
   void init() {
-    //currentUser = "Oscar";
     chatRoomList = chatrooms.toList();
 
     socketIO =
-        SocketIOManager().createSocketIO('https://fluchat.herokuapp.com', '/');
+        SocketIOManager().createSocketIO('https://servere1chat.herokuapp.com/', '/');
     socketIO.init();
 
     socketIO.subscribe('receive_message', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
-      messages.add(Message(
-          data['content'], data['senderChatID'], data['receiverChatID']));
+      if(data['privateName'] == "null" )
+        {
+          messages.add(Message(
+              data['content'], data['senderChatID'], data['receiverChatID'], data['privateName']));
+        }
+      else if (data['privateName'] != "null" )
+        {
+          if (data['privateName'] == currentUser )
+            {
+              messages.add(Message(
+                  data['content'], data['senderChatID'], data['receiverChatID'], data['privateName']));
+            }
+        }
+
       notifyListeners();
     });
 
@@ -96,16 +107,25 @@ class ChatModel extends Model {
 
   void sendMessage(
       String username, String text, String receiverChatID, String token) async {
+    String user =  "null";
+    final hola = text.split(" ");
+    hola.forEach((element) {
+      if(element.contains("@"))
+        {
+          user = element.split("@")[1];
+        }
+    });
+    print(user);
     var respuesta = await _sendMessageToApi(receiverChatID, token, text);
     print('Username en sendMessage: $username');
-    print("RESPUESTA DEL POST: $respuesta");
-    messages.add(Message(text, username, receiverChatID));
+    messages.add(Message(text, username, receiverChatID, user));
     socketIO.sendMessage(
       'send_message',
       json.encode({
         'receiverChatID': receiverChatID,
         'senderChatID': username,
         'content': text,
+        'privateName': user,
       }),
     );
     notifyListeners();
@@ -124,7 +144,8 @@ class ChatModel extends Model {
   }
 
   List<Message> getMessagesForChatID(String chatID) {
-    return messages.where((msg) => msg.receiverID == chatID).toList();
+
+    return messages.where((msg) => (msg.receiverID == chatID && (msg.privateName == "null" || msg.privateName == currentUser || msg.senderID == currentUser))).toList();
   }
 
   List<ChatRoom> getChatRooms() {
