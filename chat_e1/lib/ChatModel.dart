@@ -85,6 +85,15 @@ class ChatModel extends Model {
       notifyListeners();
     });
 
+    socketIO.subscribe('receive_notification', (jsonData){
+      Map<String, dynamic> data = json.decode(jsonData);
+      if (data['senderChatID'] == currentUser)
+        {
+          messages.add(Message(data['content'], data['senderChatID'], data['receiverChatID']));
+          notifyListeners();
+        }
+    });
+
     socketIO.subscribe('receive_room', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
       chatRoomList.add(ChatRoom(data['name'], data['chatID']));
@@ -102,20 +111,21 @@ class ChatModel extends Model {
     msg_separate.forEach((element) {
       if(element[0] == "@")
       {
-        user = element.substring(1, element.length + 1);
+        user = element.substring(1, element.length);
+        print(user);
       }
     });
 
     if(user != "null")
       {
-          socketIO.sendMessage("send_notification",{
+          socketIO.sendMessage('send_notification',
             json.encode({
               'receiverChatID': receiverChatID,
               'senderChatID': username,
               'content': text,
               'privateName': user,
-            })
-          });
+            }),
+          );
           messages.add(Message(text, username, receiverChatID));
       }
     else {
