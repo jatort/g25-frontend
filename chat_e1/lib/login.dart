@@ -28,7 +28,7 @@ class Login extends State<LoginScreen> {
 
   Future _signIn(Map<String, String> datosUsuario) async {
     //String url = 'http://34.229.56.163/api/v1/sign_in';
-    String url = 'http://192.168.0.7/api/v1/sign_in';
+    String url = 'http://192.168.0.11/api/v1/sign_in';
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"

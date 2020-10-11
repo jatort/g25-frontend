@@ -22,9 +22,8 @@ const Color kLightGray = Color(0xFFF1F0F5);
 class Images extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyHomePage(),
-    );
+    return  MyHomePage()
+    ;
   }
 }
 
@@ -111,7 +110,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             margin: EdgeInsets.all(16),
             child: RaisedButton(
               child: Text('Save'),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context, _photosUrls);
+              },
             ),
           )
         ],

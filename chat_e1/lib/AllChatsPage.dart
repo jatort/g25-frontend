@@ -27,7 +27,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
   Future<String> fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
     //String url = url_api_server;
-    String url = 'http://192.168.0.7/api/v1/chats';
+    String url = 'http://192.168.0.11/api/v1/chats';
 
     Map<String, String> headers = {
       "Accept": "application/json",

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,6 +11,7 @@ import 'dart:convert';
 import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
+import 'Images.dart';
 
 class ChatPage extends StatefulWidget {
   final ChatRoom chatroom;
@@ -47,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
     //String url = "$url_api_server/$idChat";
-    String url = 'http://192.168.0.7/api/v1/chats/$idChat';
+    String url = 'http://192.168.0.11/api/v1/chats/$idChat';
     print(url);
     print(token);
     Map<String, String> headers = {
@@ -160,7 +162,13 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
-
+  _navigateUploadImage(BuildContext context) async {
+    final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Images()),
+          );
+    print(result);
+  }
   Widget buildChatArea() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
@@ -186,29 +194,44 @@ class _ChatPageState extends State<ChatPage> {
                   ),
 
                   //BOTON SUBMIT MENSAJE
-                  RaisedButton(
-                      child: Text(
-                        "Enviar",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (!_formKey.currentState.validate()) {
-                          return;
-                        }
-                        _formKey.currentState.save();
-                        String _username =
-                            widget.currentUser['data']['user']['username'];
-                        model.sendMessage(
-                            _username,
-                            _message,
-                            widget.chatroom.chatID,
-                            widget.currentUser['data']['user']['auth_token']);
-                        _formKey.currentState.reset();
-                        //_submitMsg(_message, _username);
-                      }),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                          child: Icon(
+                              MaterialIcons.add_a_photo,
+                              size: 35,
+                            ),
+                          onPressed: () {
+                            _navigateUploadImage(context);
+                          }),
+                      new Spacer(),
+                      RaisedButton(
+                          child: Text(
+                            "Enviar",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            if (!_formKey.currentState.validate()) {
+                              return;
+                            }
+                            _formKey.currentState.save();
+                            String _username =
+                                widget.currentUser['data']['user']['username'];
+                            model.sendMessage(
+                                _username,
+                                _message,
+                                widget.chatroom.chatID,
+                                widget.currentUser['data']['user']['auth_token']);
+                            _formKey.currentState.reset();
+                            //_submitMsg(_message, _username);
+                          }),
+                    ],
+                  ),
                 ],
               ),
               decoration: Theme.of(context).platform == TargetPlatform.iOS
