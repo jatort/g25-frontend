@@ -33,6 +33,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
   Future _fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
+    //String url = url_api_server;
     String url = url_api_server_nuevo;
 
     Map<String, String> headers = {

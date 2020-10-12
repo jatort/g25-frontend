@@ -34,7 +34,9 @@ class Register extends State<RegisterScreen> {
   }
 
   Future _signUp(Map<String, String> datosUsuario) async {
+    
     String url = url_api_server_nuevo;
+
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"

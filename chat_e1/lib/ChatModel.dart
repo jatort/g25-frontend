@@ -17,33 +17,6 @@ class ChatModel extends Model {
   String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
   List _messagesApi;
 
-  Future<String> getJsonData() async {
-    final token = "2iO2NMu-Iw-QU0G_BwZZUg";
-    String url = url_api_server_nuevo;
-    Map<String, String> headers = {
-      "Accept": "application/json",
-      "Content-type": "application/x-www-form-urlencoded",
-      HttpHeaders.authorizationHeader: "Bearer $token",
-    };
-    Map<String, dynamic> body = {
-      "user[email]": "nmaturana7@uc.cl",
-      "user[password]": "colegio",
-      "user[username]": "nmaturana7",
-      "user[password_confirmation]": "colegio"
-    };
-    //Map<String, dynamic> body = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
-    //var json = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
-
-    final response = await http.get(url, headers: headers);
-    //print(response.body);
-    if (response.statusCode == 200) {
-      var convertDataToJson = json.decode(response.body);
-      data = convertDataToJson['messages'];
-    }
-
-    return "Success";
-  }
-
   Future _sendMessageToApi(String idChat, String token, String mensaje) async {
     String url = "$url_api_server_nuevo/$idChat/messages";
     print(url);

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +11,7 @@ import 'dart:convert';
 
 import './Message.dart';
 import './ChatModel.dart';
+import 'Images.dart';
 
 class ChatPage extends StatefulWidget {
   final ChatRoom chatroom;
@@ -42,6 +44,7 @@ class _ChatPageState extends State<ChatPage> {
           _messagesApi = value,
         });
     super.initState();
+    
   }
   */
 
@@ -49,6 +52,7 @@ class _ChatPageState extends State<ChatPage> {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
     String url = "$url_api_server_nuevo/$idChat";
+
     print(url);
     print(token);
     Map<String, String> headers = {
@@ -80,6 +84,35 @@ class _ChatPageState extends State<ChatPage> {
   //Api obtiene los mensajes de la sala de chat
 
   Widget buildSingleMessage(Message message) {
+    if (message.text.substring(0, 4) == 'http'){
+      return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Container(margin: const EdgeInsets.only(right: 18.0)),
+          new Expanded(
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text('${message.senderID}:   [${new DateTime.now()}]'),
+                new Container(
+                  margin: const EdgeInsets.only(top: 6.0),
+                  child: new Image.network(message.text, width: 350,),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      color: Colors.indigo[100],
+      padding: EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 0,
+      ),
+    );
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: new Row(
@@ -170,7 +203,15 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
-
+  var _result;
+  _navigateUploadImage(BuildContext context) async {
+    _result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Images()),
+          );
+    //print(_result);
+    
+  }
   Widget buildChatArea() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
@@ -196,30 +237,56 @@ class _ChatPageState extends State<ChatPage> {
                   ),
 
                   //BOTON SUBMIT MENSAJE
-                  RaisedButton(
-                      child: Text(
-                        "Enviar",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (!_formKey.currentState.validate()) {
-                          return;
-                        }
-                        _formKey.currentState.save();
-
-                        String _username =
-                            widget.currentUser['data']['user']['username'];
-                        model.sendMessage(
-                            _username,
-                            _message,
-                            widget.chatroom.chatID,
-                            widget.currentUser['data']['user']['auth_token']);
-                        _formKey.currentState.reset();
-                        //_submitMsg(_message, _username);
-                      }),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                          child: Icon(
+                              MaterialIcons.add_a_photo,
+                              size: 35,
+                            ),
+                          onPressed: () async{
+                            await _navigateUploadImage(context);
+                            // Se recorre la lista de imagenes y se envia un mensaje por cada url
+                            if (_result != null){
+                              String _username =
+                                widget.currentUser['data']['user']['username'];
+                              _result.forEach((image) => 
+                              model.sendMessage(
+                                _username,
+                                image,
+                                widget.chatroom.chatID,
+                                widget.currentUser['data']['user']['auth_token'])
+                              );
+                            }                             
+                          }),
+                      new Spacer(),
+                      RaisedButton(
+                          child: Text(
+                            "Enviar",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            if (!_formKey.currentState.validate()) {
+                              return;
+                            }
+                            _formKey.currentState.save();
+                            String _username =
+                                widget.currentUser['data']['user']['username'];
+                            model.sendMessage(
+                                _username,
+                                _message,
+                                widget.chatroom.chatID,
+                                widget.currentUser['data']['user']['auth_token']);
+                            _formKey.currentState.reset();
+                            //_submitMsg(_message, _username);
+                          }),
+                    ],
+                  ),
                 ],
               ),
               decoration: Theme.of(context).platform == TargetPlatform.iOS
@@ -294,26 +361,3 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Nombre sala: ${widget.chatroom.name}"),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-      ),
-      body: Column(
-        children: <Widget>[
-          buildChatList(),
-          new Divider(height: 1.0),
-          new Container(
-            child: buildChatArea(),
-            decoration: new BoxDecoration(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/
