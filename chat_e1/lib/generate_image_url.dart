@@ -16,16 +16,11 @@ class GenerateImageUrl {
       Map body = {"fileType": fileType};
 
       var response = await http.post(
-        //For IOS
-//        'http://localhost:5000/generatePresignedUrl',
-        //For Android
         'https://serverimagee1.herokuapp.com/generatePresignedUrl',
         body: body,
       );
 
       var result = jsonDecode(response.body);
-
-      print(result);
 
       if (result['success'] != null) {
         success = result['success'];

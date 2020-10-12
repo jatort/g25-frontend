@@ -4,8 +4,6 @@ import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-
 import './ChatRoom.dart';
 import './Message.dart';
 
@@ -19,7 +17,6 @@ class ChatModel extends Model {
 
   Future _sendMessageToApi(String idChat, String token, String mensaje) async {
     String url = "$url_api_server_nuevo/$idChat/messages";
-    print(url);
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded",
@@ -37,7 +34,6 @@ class ChatModel extends Model {
 
   Future _sendChatroomToApi(String nameChat, String token) async {
     String url = url_api_server_nuevo;
-    print(url);
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded",
@@ -61,7 +57,6 @@ class ChatModel extends Model {
   SocketIO socketIO;
 
   void init() {
-    //currentUser = "Oscar";
     chatRoomList = chatrooms.toList();
 
     socketIO = SocketIOManager()
@@ -82,10 +77,9 @@ class ChatModel extends Model {
     });
 
     socketIO.subscribe('receive_notification', (jsonData) {
-      print("recibida");
       Map<String, dynamic> data = json.decode(jsonData);
-      messages.add(Message(
-          data['content'], data['senderChatID'], data['receiverChatID'], data['timeMsg'] ));
+      messages.add(Message(data['content'], data['senderChatID'],
+          data['receiverChatID'], data['timeMsg']));
       notifyListeners();
     });
 
@@ -105,9 +99,8 @@ class ChatModel extends Model {
         user = element.substring(1);
       }
     });
-    
+
     if (user != "null") {
-      print("FUNCIONANDO ARROBA adsfkjllllllllllllllllñjfdlksafsfajdlksfja");
       var now = new DateTime.now().toString();
       messages.add(Message(text, username, receiverChatID, now));
       socketIO.sendMessage(
@@ -123,8 +116,6 @@ class ChatModel extends Model {
       notifyListeners();
     } else {
       var respuesta = await _sendMessageToApi(receiverChatID, token, text);
-      print('Username en sendMessage: $username');
-      print("RESPUESTA DEL POST: $respuesta");
       String timeMsg = respuesta['created_at'].toString();
       messages.add(Message(text, username, receiverChatID, timeMsg));
       socketIO.sendMessage(

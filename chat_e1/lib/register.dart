@@ -34,7 +34,6 @@ class Register extends State<RegisterScreen> {
   }
 
   Future _signUp(Map<String, String> datosUsuario) async {
-    
     String url = url_api_server_nuevo;
 
     Map<String, String> headers = {
@@ -47,7 +46,6 @@ class Register extends State<RegisterScreen> {
       "user[username]": datosUsuario['username'],
       "user[password_confirmation]": datosUsuario['password_confirmation']
     };
-    // make POST request
     Response response = await post(url,
         headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
 

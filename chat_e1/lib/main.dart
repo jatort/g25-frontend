@@ -1,16 +1,11 @@
 // ignore: avoid_web_libraries_in_flutter
 
-import 'dart:convert';
-
-import 'package:chat_e1/AllChatsPage.dart';
 import 'package:chat_e1/ChatModel.dart';
 import 'package:chat_e1/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
 import 'package:scoped_model/scoped_model.dart';
-
 import 'login.dart';
 import 'register.dart';
 
@@ -25,30 +20,6 @@ final ThemeData androidTheme = new ThemeData(
   accentColor: Colors.green,
 );
 
-/*
-_signUp() async {
-  String url = 'http://10.0.2.2:3000/api/v1/sign_up';
-  Map<String, String> headers = {
-    "Accept": "application/json",
-    "Content-type": "application/x-www-form-urlencoded"
-  };
-  Map<String, dynamic> body = {
-    "user[email]": "nmaturana8@u          Container(
-            height: double.infinity,
-            child: _signUp(),
-          )]": "colegio"
-  };
-
-  // make POST request
-  Response response = await post(url,
-      headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
-
-  var respuesta = json.decode(response.body);
-
-  print(respuesta["messages"]);
-}
-*/
-
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -62,8 +33,6 @@ class MyApp extends StatelessWidget {
               ? iOSTheme
               : androidTheme,
           home: MainScreen(),
-
-          /// Acá se crea la clase que contiene la lista de los Chat
         ));
   }
 }
@@ -132,39 +101,6 @@ class MainScreen extends StatelessWidget {
     );
   }
 
-/*
-  Widget _buildBottonSalasChat(context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
-      width: double.infinity,
-      child: RaisedButton(
-        elevation: 5.0,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AllChatsPage()),
-          );
-        },
-        padding: EdgeInsets.all(15.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        color: Colors.white,
-        child: Text(
-          'SALAS DE CHAT',
-          style: TextStyle(
-            color: Color(0xFF527DAA),
-            letterSpacing: 1.5,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
-          ),
-        ),
-      ),
-    );
-  }
-*/
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -210,8 +146,6 @@ class MainScreen extends StatelessWidget {
                   SizedBox(height: 30.0),
                   _buildBottonRegistrarse(context),
                   _buildBottonIniciarSesion(context),
-                  //_buildBottonSalasChat(context),
-                  //_buildBottonUploadImage(context),
                 ],
               ),
             ),

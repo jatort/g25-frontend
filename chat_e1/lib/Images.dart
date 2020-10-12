@@ -8,7 +8,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import 'gallery_item.dart';
@@ -23,8 +22,7 @@ const Color kLightGray = Color(0xFFF1F0F5);
 class Images extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return  MyHomePage()
-    ;
+    return MyHomePage();
   }
 }
 
@@ -72,7 +70,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                 return Stack(
                   children: <Widget>[
                     InkWell(
-                      onTap: () => _onPhotoClicked(index -1),
+                      onTap: () => _onPhotoClicked(index - 1),
                       child: Container(
                         margin: EdgeInsets.all(5),
                         height: 100,
@@ -159,8 +157,6 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
     PermissionStatus permissionStatus = await permission.status;
 
-    print(permissionStatus);
-
     if (permissionStatus == PermissionStatus.restricted) {
       _showOpenAppSettingsDialog(context);
 
@@ -206,7 +202,6 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     }
 
     if (permissionStatus == PermissionStatus.granted) {
-      print('Permission granted');
       File image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
       );
@@ -232,31 +227,27 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         });
 
         try {
-            GenerateImageUrl generateImageUrl = GenerateImageUrl();
-            await generateImageUrl.call(fileExtension);
+          GenerateImageUrl generateImageUrl = GenerateImageUrl();
+          await generateImageUrl.call(fileExtension);
 
-            String uploadUrl;
-            if (generateImageUrl.isGenerated != null &&
-                generateImageUrl.isGenerated) {
-              uploadUrl = generateImageUrl.uploadUrl;
-            } else {
-              throw generateImageUrl.message;
-            }
+          String uploadUrl;
+          if (generateImageUrl.isGenerated != null &&
+              generateImageUrl.isGenerated) {
+            uploadUrl = generateImageUrl.uploadUrl;
+          } else {
+            throw generateImageUrl.message;
+          }
 
-            bool isUploaded = await uploadFile(context, uploadUrl, image);
-            if (isUploaded) {
-              print('Uploaded');
-              setState(() {
-                _photosUrls.add(generateImageUrl.downloadUrl);
-                print("FOTOOOOOOOOOOOOOOS!");
-                print(_photosUrls);
-                _photosStatus
-                    .replaceRange(length - 1, length, [PhotoStatus.LOADED]);
-                _galleryItems[length - 1].resource = generateImageUrl.downloadUrl;  //Only addition in _onAddPhotoClicked(context)
-              });
-      }
+          bool isUploaded = await uploadFile(context, uploadUrl, image);
+          if (isUploaded) {
+            setState(() {
+              _photosUrls.add(generateImageUrl.downloadUrl);
+              _photosStatus
+                  .replaceRange(length - 1, length, [PhotoStatus.LOADED]);
+              _galleryItems[length - 1].resource = generateImageUrl.downloadUrl;
+            });
+          }
         } catch (e) {
-          print(e);
           setState(() {
             _photosStatus[length - 1] = PhotoStatus.ERROR;
           });
@@ -281,15 +272,15 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   }
 
   Future<bool> _onDeleteReviewPhotoClicked(int index) async {
-  if (_photosStatus[index] == PhotoStatus.LOADED) {
-    _photosUrls.removeAt(index);
-  }
-  _photos.removeAt(index);
-  _photosStatus.removeAt(index);
-  _photosSources.removeAt(index);
-  _galleryItems.removeAt(index);
-  setState(() {});
-  return true;
+    if (_photosStatus[index] == PhotoStatus.LOADED) {
+      _photosUrls.removeAt(index);
+    }
+    _photos.removeAt(index);
+    _photosStatus.removeAt(index);
+    _photosSources.removeAt(index);
+    _galleryItems.removeAt(index);
+    setState(() {});
+    return true;
   }
 
   _showOpenAppSettingsDialog(context) {
@@ -301,9 +292,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       openAppSettings,
     );
   }
+
   _onPhotoClicked(int index) {
     if (_photosStatus[index] == PhotoStatus.ERROR) {
-      print("Try uploading again");
       return;
     }
 
