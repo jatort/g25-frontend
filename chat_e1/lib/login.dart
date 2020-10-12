@@ -17,6 +17,9 @@ class Login extends State<LoginScreen> {
   String _password;
   String messageNotice = "";
   Map<String, dynamic> data;
+  String url_localhost = 'http://10.0.2.2:3000/api/v1/sign_in';
+  String url_api_server = 'http://34.229.56.163:3000/api/v1/sign_in';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/sign_in';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -27,8 +30,9 @@ class Login extends State<LoginScreen> {
   }
 
   Future _signIn(Map<String, String> datosUsuario) async {
-    //String url = 'http://34.229.56.163/api/v1/sign_in';
-    String url = 'http://192.168.0.11/api/v1/sign_in';
+    
+    String url = url_api_server_nuevo;
+
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"

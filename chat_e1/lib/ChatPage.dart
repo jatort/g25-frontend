@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
+import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
 import 'Images.dart';
@@ -33,9 +33,11 @@ class _ChatPageState extends State<ChatPage> {
 
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
   List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  /*
   @override
   void initState() {
     _getMessagesFromApi().then((value) => {
@@ -44,12 +46,13 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     
   }
+  */
 
   Future _getMessagesFromApi() async {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
-    //String url = "$url_api_server/$idChat";
-    String url = 'http://192.168.0.11/api/v1/chats/$idChat';
+    String url = "$url_api_server_nuevo/$idChat";
+
     print(url);
     print(token);
     Map<String, String> headers = {
@@ -68,9 +71,10 @@ class _ChatPageState extends State<ChatPage> {
 
     if (messagesApi != null) {
       messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
-          mensaje['user_id'].toString(), mensaje['chat_id'].toString())));
+          mensaje['username'], mensaje['chat_id'].toString())));
     }
     print(msgApi);
+    _messagesApi = msgApi;
     return msgApi;
   }
 
@@ -168,23 +172,31 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildChatList() {
     print('entrando a build....');
-    print("_messageApi en el buildchatlist: $_messagesApi");
+    print("_messageApi en el BUILDCHATLIST: $_messagesApi");
     //print(_messagesApi);
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
         List<Message> messagesFromSocket =
             model.getMessagesForChatID(widget.chatroom.chatID);
 
-        _messagesApi.forEach((element) {
-          messagesFromSocket.insert(0, element);
-        });
+        List<Message> messagesOrder = [];
 
+        if (messagesFromSocket.length == 0) {
+          _messagesApi.forEach((element) {
+            messagesOrder.add(element);
+            model.messages.add(element);
+          });
+        }
+
+        messagesFromSocket.forEach((element) {
+          messagesOrder.add(element);
+        });
         return Container(
           height: MediaQuery.of(context).size.height * 0.65,
           child: ListView.builder(
-            itemCount: messagesFromSocket.length,
+            itemCount: messagesOrder.length,
             itemBuilder: (BuildContext context, int index) {
-              return buildSingleMessage(messagesFromSocket[index]);
+              return buildSingleMessage(messagesOrder[index]);
             },
           ),
         );
@@ -304,6 +316,7 @@ class _ChatPageState extends State<ChatPage> {
                       textEditingController.text,
                       widget.chatroom.chatID,
                       widget.currentUser['data']['user']['auth_token']);
+
                   textEditingController.text = '';
                 },
                 elevation: 0,
@@ -348,26 +361,3 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Nombre sala: ${widget.chatroom.name}"),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-      ),
-      body: Column(
-        children: <Widget>[
-          buildChatList(),
-          new Divider(height: 1.0),
-          new Container(
-            child: buildChatArea(),
-            decoration: new BoxDecoration(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/

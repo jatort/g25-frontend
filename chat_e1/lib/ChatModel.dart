@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-import './User.dart';
+import './ChatRoom.dart';
 import './Message.dart';
 
 class ChatModel extends Model {
@@ -14,15 +14,16 @@ class ChatModel extends Model {
   var _respuesta;
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
   List _messagesApi;
 
-  Future<String> _sendMessageToApi(
-      String idChat, String token, String mensaje) async {
-    //String url = "$url_api_server/$idChat/messages";
-    String url = 'http://192.168.0.11/api/v1/chats/$idChat/messages';
+  Future _sendMessageToApi(String idChat, String token, String mensaje) async {
+    String url = "$url_api_server_nuevo/$idChat/messages";
+    print(url);
     Map<String, String> headers = {
       "Accept": "application/json",
-      "Content-type": "application/x-www-form-urlencoded"
+      "Content-type": "application/x-www-form-urlencoded",
+      HttpHeaders.authorizationHeader: "Bearer $token",
     };
     Map<String, dynamic> body = {"message[body]": mensaje};
 
@@ -34,13 +35,25 @@ class ChatModel extends Model {
     return respuesta;
   }
 
-  List<ChatRoom> chatrooms = [
-    ChatRoom('IronMan', '111'),
-    ChatRoom('Captain America', '222'),
-    ChatRoom('Antman', '333'),
-    ChatRoom('Hulk', '444'),
-    ChatRoom('Thor', '555'),
-  ];
+  Future _sendChatroomToApi(String nameChat, String token) async {
+    String url = url_api_server_nuevo;
+    print(url);
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Content-type": "application/x-www-form-urlencoded",
+      HttpHeaders.authorizationHeader: "Bearer $token",
+    };
+    Map<String, dynamic> body = {"chat[title]": nameChat};
+
+    Response response = await post(url,
+        headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
+
+    var respuesta = json.decode(response.body);
+
+    return respuesta['data']['chat'];
+  }
+
+  List<ChatRoom> chatrooms = [];
 
   String currentUser;
   List<ChatRoom> chatRoomList = List<ChatRoom>();
@@ -48,11 +61,11 @@ class ChatModel extends Model {
   SocketIO socketIO;
 
   void init() {
-    currentUser = "Oscar";
+    //currentUser = "Oscar";
     chatRoomList = chatrooms.toList();
 
-    socketIO = SocketIOManager()
-        .createSocketIO('https://servere1chat.herokuapp.com', '/');
+    socketIO =
+        SocketIOManager().createSocketIO('https://fluchat.herokuapp.com', '/');
     socketIO.init();
 
     socketIO.subscribe('receive_message', (jsonData) {
@@ -62,26 +75,51 @@ class ChatModel extends Model {
       notifyListeners();
     });
 
+    socketIO.subscribe('receive_room', (jsonData) {
+      Map<String, dynamic> data = json.decode(jsonData);
+      chatRoomList.add(ChatRoom(data['name'], data['chatID']));
+      notifyListeners();
+    });
+
     socketIO.connect();
   }
 
   void sendMessage(
-      String username, String text, String receiverChatID, String token) {
-    messages.add(Message(text, currentUser, receiverChatID));
-    //var respuesta = _sendMessageToApi(receiverChatID, token, text);
+      String username, String text, String receiverChatID, String token) async {
+    var respuesta = await _sendMessageToApi(receiverChatID, token, text);
+    print('Username en sendMessage: $username');
+    print("RESPUESTA DEL POST: $respuesta");
+    messages.add(Message(text, username, receiverChatID));
     socketIO.sendMessage(
       'send_message',
       json.encode({
         'receiverChatID': receiverChatID,
-        'senderChatID': currentUser,
+        'senderChatID': username,
         'content': text,
       }),
     );
     notifyListeners();
   }
 
+  void sendRoom(String nameChat, String chatID, String token) async {
+    var respuesta = await _sendChatroomToApi(nameChat, token);
+    chatRoomList.add(ChatRoom(nameChat, respuesta['id'].toString()));
+
+    socketIO.sendMessage(
+      'send_room',
+      json.encode({
+        'name': nameChat,
+        'chatID': respuesta['id'].toString(),
+      }),
+    );
+    notifyListeners();
+  }
+
   List<Message> getMessagesForChatID(String chatID) {
-    //var respuesta = _getMessagesFromApi(chatID, token);
     return messages.where((msg) => msg.receiverID == chatID).toList();
+  }
+
+  List<ChatRoom> getChatRooms() {
+    return chatRoomList;
   }
 }

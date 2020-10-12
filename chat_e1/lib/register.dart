@@ -21,6 +21,9 @@ class Register extends State<RegisterScreen> {
   String _currentpassword;
   String messageNotice = "";
   Map<String, dynamic> data;
+  String url_localhost = 'http://10.0.2.2:3000/api/v1/sign_up';
+  String url_api_server = 'http://34.229.56.163:3000/api/v1/sign_up';
+  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/sign_up';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -31,8 +34,9 @@ class Register extends State<RegisterScreen> {
   }
 
   Future _signUp(Map<String, String> datosUsuario) async {
-    //String url = 'http://34.229.56.163/api/v1/sign_up';
-    String url = 'http://192.168.0.11/api/v1/sign_up';
+    
+    String url = url_api_server_nuevo;
+
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded"
