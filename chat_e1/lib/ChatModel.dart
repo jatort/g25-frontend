@@ -10,7 +10,6 @@ import './ChatRoom.dart';
 import './Message.dart';
 
 class ChatModel extends Model {
-
   String data;
   var _respuesta;
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
@@ -63,6 +62,24 @@ class ChatModel extends Model {
     return respuesta;
   }
 
+  Future _sendChatroomToApi(String nameChat, String token) async {
+    String url = url_api_server_nuevo;
+    print(url);
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Content-type": "application/x-www-form-urlencoded",
+      HttpHeaders.authorizationHeader: "Bearer $token",
+    };
+    Map<String, dynamic> body = {"chat[title]": nameChat};
+
+    Response response = await post(url,
+        headers: headers, body: body, encoding: Encoding.getByName("utf-8"));
+
+    var respuesta = json.decode(response.body);
+
+    return respuesta['data']['chat'];
+  }
+
   List<ChatRoom> chatrooms = [];
 
   String currentUser;
@@ -111,13 +128,15 @@ class ChatModel extends Model {
     notifyListeners();
   }
 
-  void sendRoom(String name, String chatID) {
-    chatRoomList.add(ChatRoom(name, chatID));
+  void sendRoom(String nameChat, String chatID, String token) async {
+    var respuesta = await _sendChatroomToApi(nameChat, token);
+    chatRoomList.add(ChatRoom(nameChat, respuesta['id'].toString()));
+
     socketIO.sendMessage(
       'send_room',
       json.encode({
-        'name': name,
-        'chatID': chatID,
+        'name': nameChat,
+        'chatID': respuesta['id'].toString(),
       }),
     );
     notifyListeners();

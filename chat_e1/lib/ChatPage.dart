@@ -8,7 +8,6 @@ import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
 
@@ -36,6 +35,7 @@ class _ChatPageState extends State<ChatPage> {
   List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  /*
   @override
   void initState() {
     _getMessagesFromApi().then((value) => {
@@ -43,6 +43,7 @@ class _ChatPageState extends State<ChatPage> {
         });
     super.initState();
   }
+  */
 
   Future _getMessagesFromApi() async {
     String idChat = chatroom.chatID;
@@ -69,6 +70,7 @@ class _ChatPageState extends State<ChatPage> {
           mensaje['username'], mensaje['chat_id'].toString())));
     }
     print(msgApi);
+    _messagesApi = msgApi;
     return msgApi;
   }
 
@@ -143,10 +145,16 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, child, model) {
         List<Message> messagesFromSocket =
             model.getMessagesForChatID(widget.chatroom.chatID);
+
         List<Message> messagesOrder = [];
-        _messagesApi.forEach((element) {
-          messagesOrder.add(element);
-        });
+
+        if (messagesFromSocket.length == 0) {
+          _messagesApi.forEach((element) {
+            messagesOrder.add(element);
+            model.messages.add(element);
+          });
+        }
+
         messagesFromSocket.forEach((element) {
           messagesOrder.add(element);
         });
@@ -201,7 +209,7 @@ class _ChatPageState extends State<ChatPage> {
                           return;
                         }
                         _formKey.currentState.save();
-                        
+
                         String _username =
                             widget.currentUser['data']['user']['username'];
                         model.sendMessage(
@@ -234,7 +242,6 @@ class _ChatPageState extends State<ChatPage> {
               SizedBox(width: 10.0),
               FloatingActionButton(
                 onPressed: () {
-
                   String _username =
                       widget.currentUser['data']['user']['username'];
                   model.sendMessage(
