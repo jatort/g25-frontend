@@ -164,6 +164,7 @@ class MainScreen extends StatelessWidget {
     );
   }
 */
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -210,6 +211,7 @@ class MainScreen extends StatelessWidget {
                   _buildBottonRegistrarse(context),
                   _buildBottonIniciarSesion(context),
                   //_buildBottonSalasChat(context),
+                  //_buildBottonUploadImage(context),
                 ],
               ),
             ),

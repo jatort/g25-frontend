@@ -6,6 +6,7 @@ import 'dart:io';
 import './ChatPage.dart';
 import './ChatRoom.dart';
 import './ChatModel.dart';
+import 'ChatRoom.dart';
 
 class AllChatsPage extends StatefulWidget {
   final Map usuario;
@@ -23,15 +24,16 @@ class _AllChatsPageState extends State<AllChatsPage> {
     text: "",
   );
 
-  List _rooms;
+  List _roomsApi = [];
   Map currentUser;
   _AllChatsPageState(this.currentUser);
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
   String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/chats';
 
-  Future<String> fetchRooms() async {
+  Future _fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
+    //String url = url_api_server;
     String url = url_api_server_nuevo;
 
     Map<String, String> headers = {
@@ -44,24 +46,28 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
     final response = await http.get(url, headers: headers);
 
-    setState(() {
-      var convertDataToJson = json.decode(response.body);
-      print(convertDataToJson);
-      _rooms = convertDataToJson['data']['chats'];
-    });
+    var convertDataToJson = json.decode(response.body);
 
-    if (response.statusCode == 200) {
-      return 'success';
-    } else {
-      throw Exception('Failed to load chat rooms');
+    var roomsApi = convertDataToJson['data']['chats'];
+
+    List rmsApi = [];
+
+    if (roomsApi != null) {
+      roomsApi.forEach(
+          (room) => rmsApi.add(ChatRoom(room['title'], room['id'].toString())));
     }
+
+    print(rmsApi);
+
+    _roomsApi = rmsApi;
+
+    return rmsApi;
   }
 
   @override
   void initState() {
-    super.initState();
     ScopedModel.of<ChatModel>(context, rebuildOnChange: false).init();
-    fetchRooms();
+    super.initState();
   }
 
   void chatRoomClicked(ChatRoom chatroom) {
@@ -77,12 +83,31 @@ class _AllChatsPageState extends State<AllChatsPage> {
   Widget buildAllChatList() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
-        if (_rooms != null) {
-          _rooms.forEach((room) => model.chatRoomList
-              .add(ChatRoom(room['title'], room['id'].toString())));
+        List<ChatRoom> chatroomsFromSocket = List.from(model.getChatRooms());
+
+        List<ChatRoom> chatrooms = [];
+
+        print("CHATROOMS FROM SOCKET: $chatroomsFromSocket");
+
+        if (chatroomsFromSocket.length == 0) {
+          print("ROOOOMS DE LA API: $_roomsApi");
+          _roomsApi.forEach((element) {
+            chatrooms.add(element);
+            model.chatRoomList.add(element);
+          });
         }
+
         model.currentUser = currentUser['data']['user']['username'];
-        List<ChatRoom> chatrooms = model.getChatRooms();
+        print("CHATROOMS FROM SOCKET ANTES DEL FOR: $chatroomsFromSocket");
+
+        chatroomsFromSocket.forEach((element) {
+          chatrooms.add(element);
+        });
+
+        print("CHATROOOMS: $chatrooms");
+
+        //List<ChatRoom> chatrooms = model.getChatRooms();
+
 
         return Column(
           children: [
@@ -123,6 +148,25 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _fetchRooms(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Text('Loading...');
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('All Chats'),
+          ),
+          body: buildAllChatList(),
+        );
+      },
+    );
+  }
+
+  /*
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('All Chats'),
@@ -130,6 +174,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
       body: buildAllChatList(),
     );
   }
+  */
 
   Widget _buildNewChatroomForm() {
     return ScopedModelDescendant<ChatModel>(builder: (context, child, model) {
@@ -146,8 +191,8 @@ class _AllChatsPageState extends State<AllChatsPage> {
                   onSubmitted: (text) {
                     setState(() {
                       if (nameChatController.text != "") {
-                        model.sendRoom(
-                            nameChatController.text, nameChatController.text);
+                        model.sendRoom(nameChatController.text,
+                            currentUser['data']['user']['auth_token']);
                       }
                     });
                     nameChatController.clear();
@@ -166,8 +211,8 @@ class _AllChatsPageState extends State<AllChatsPage> {
               onPressed: () {
                 setState(() {
                   if (nameChatController.text != "") {
-                    model.sendRoom(
-                        nameChatController.text, nameChatController.text);
+                    model.sendRoom(nameChatController.text,
+                        currentUser['data']['user']['auth_token']);
                   }
                 });
                 nameChatController.clear();

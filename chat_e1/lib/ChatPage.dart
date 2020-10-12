@@ -3,14 +3,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 import './ChatRoom.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// import './User.dart';
 import './Message.dart';
 import './ChatModel.dart';
+import 'Images.dart';
 
 class ChatPage extends StatefulWidget {
   final ChatRoom chatroom;
@@ -36,18 +37,22 @@ class _ChatPageState extends State<ChatPage> {
   List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  /*
   @override
   void initState() {
     _getMessagesFromApi().then((value) => {
           _messagesApi = value,
         });
     super.initState();
+    
   }
+  */
 
   Future _getMessagesFromApi() async {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
     String url = "$url_api_server_nuevo/$idChat";
+
     print(url);
     print(token);
     Map<String, String> headers = {
@@ -65,10 +70,14 @@ class _ChatPageState extends State<ChatPage> {
     List msgApi = [];
 
     if (messagesApi != null) {
-      messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
-          mensaje['username'], mensaje['chat_id'].toString())));
+      messagesApi.forEach((mensaje) => msgApi.add(Message(
+          mensaje['body'],
+          mensaje['username'],
+          mensaje['chat_id'].toString(),
+          mensaje['created_at'].toString())));
     }
     print(msgApi);
+    _messagesApi = msgApi;
     return msgApi;
   }
 
@@ -78,6 +87,38 @@ class _ChatPageState extends State<ChatPage> {
   //Api obtiene los mensajes de la sala de chat
 
   Widget buildSingleMessage(Message message) {
+    if (message.text.contains('https://d3lh42ld02oh6l.cloudfront.net/')) {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(margin: const EdgeInsets.only(right: 18.0)),
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text('${message.senderID}:   [${new DateTime.now()}]'),
+                  new Container(
+                    margin: const EdgeInsets.only(top: 6.0),
+                    child: new Image.network(
+                      message.text,
+                      width: 350,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        color: Colors.indigo[100],
+        padding: EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 0,
+        ),
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: new Row(
@@ -88,7 +129,7 @@ class _ChatPageState extends State<ChatPage> {
             child: new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Text('${message.senderID}:   [${new DateTime.now()}]'),
+                new Text('${message.senderID}:   [${message.timeMsg}]'),
                 new Container(
                   margin: const EdgeInsets.only(top: 6.0),
                   child: new Text(message.text),
@@ -143,18 +184,26 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, child, model) {
         List<Message> messagesFromSocket =
             model.getMessagesForChatID(widget.chatroom.chatID);
+
         List<Message> messagesOrder = [];
-        _messagesApi.forEach((element) {
-          messagesOrder.add(element);
-        });
+
+        if (messagesFromSocket.length == 0) {
+          _messagesApi.forEach((element) {
+            messagesOrder.add(element);
+            model.messages.add(element);
+          });
+        }
+        print("MENSJAES ANTES DEL FOR DEL SOCKET: $messagesOrder");
         messagesFromSocket.forEach((element) {
           messagesOrder.add(element);
         });
+        print("MENSAJES A IMPRIMIR EN EL CHAT: $messagesOrder");
         return Container(
           height: MediaQuery.of(context).size.height * 0.65,
           child: ListView.builder(
             itemCount: messagesOrder.length,
             itemBuilder: (BuildContext context, int index) {
+              print("INDICE DE MENSAJES: $index");
               return buildSingleMessage(messagesOrder[index]);
             },
           ),
@@ -163,92 +212,129 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  var _result;
+  _navigateUploadImage(BuildContext context) async {
+    _result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Images()),
+    );
+    //print(_result);
+  }
+
   Widget buildChatArea() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
-        return Container(
-          margin: const EdgeInsets.only(right: 9, left: 9),
-          child: Row(
-            children: <Widget>[
-              // FORM PARA ENVIAR MENSAJE
+        return new IconTheme(
+          data: new IconThemeData(color: Theme.of(context).accentColor),
+          child: new Container(
+              margin: const EdgeInsets.symmetric(horizontal: 9.0),
+              child: Column(
+                children: <Widget>[
+                  // FORM PARA ENVIAR MENSAJE
 
-              Expanded(
-                flex: 3,
-                child: Container(
-                  margin: EdgeInsets.all(0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        _buildMessage(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              //BOTON SUBMIT MENSAJE
-              Expanded(
-                flex: 1,
-                child: RaisedButton(
-                    child: Text(
-                      "Enviar",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 15,
+                  new Container(
+                    margin: EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          _buildMessage(),
+                        ],
                       ),
                     ),
-                    onPressed: () {
-                      if (!_formKey.currentState.validate()) {
-                        return;
-                      }
-                      _formKey.currentState.save();
+                  ),
 
-                      String _username =
-                          widget.currentUser['data']['user']['username'];
-                      model.sendMessage(
-                          _username,
-                          _message,
-                          widget.chatroom.chatID,
-                          widget.currentUser['data']['user']['auth_token']);
-                      _formKey.currentState.reset();
-                      //_submitMsg(_message, _username);
-                    }),
+                  //BOTON SUBMIT MENSAJE
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                          child: Icon(
+                            MaterialIcons.add_a_photo,
+                            size: 35,
+                          ),
+                          onPressed: () async {
+                            await _navigateUploadImage(context);
+                            // Se recorre la lista de imagenes y se envia un mensaje por cada url
+                            if (_result != null) {
+                              String _username = widget.currentUser['data']
+                                  ['user']['username'];
+                              _result.forEach((image) => model.sendMessage(
+                                  _username,
+                                  image,
+                                  widget.chatroom.chatID,
+                                  widget.currentUser['data']['user']
+                                      ['auth_token']));
+                            }
+                          }),
+                      new Spacer(),
+                      RaisedButton(
+                          child: Text(
+                            "Enviar",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            if (!_formKey.currentState.validate()) {
+                              return;
+                            }
+                            _formKey.currentState.save();
+                            String _username =
+                                widget.currentUser['data']['user']['username'];
+                            model.sendMessage(
+                                _username,
+                                _message,
+                                widget.chatroom.chatID,
+                                widget.currentUser['data']['user']
+                                    ['auth_token']);
+                            _formKey.currentState.reset();
+                            //_submitMsg(_message, _username);
+                          }),
+                    ],
+                  ),
+                ],
+              ),
+              decoration: Theme.of(context).platform == TargetPlatform.iOS
+                  ? new BoxDecoration(
+                      border:
+                          new Border(top: new BorderSide(color: Colors.red)))
+                  : null),
+        );
+
+        ///
+        return Container(
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: TextField(
+                  controller: textEditingController,
+                ),
+              ),
+              SizedBox(width: 10.0),
+              FloatingActionButton(
+                onPressed: () {
+                  String _username =
+                      widget.currentUser['data']['user']['username'];
+                  model.sendMessage(
+                      _username,
+                      textEditingController.text,
+                      widget.chatroom.chatID,
+                      widget.currentUser['data']['user']['auth_token']);
+
+                  textEditingController.text = '';
+                },
+                elevation: 0,
+                child: Icon(Icons.send),
               ),
             ],
           ),
         );
 
-        ///
-        // return Container(
-        //   child: Row(
-        //     children: <Widget>[
-        //       Container(
-        //         width: MediaQuery.of(context).size.width * 0.8,
-        //         child: TextField(
-        //           controller: textEditingController,
-        //         ),
-        //       ),
-        //       SizedBox(width: 10.0),
-        //       FloatingActionButton(
-        //         onPressed: () {
-        //           String _username =
-        //               widget.currentUser['data']['user']['username'];
-        //           model.sendMessage(
-        //               _username,
-        //               textEditingController.text,
-        //               widget.chatroom.chatID,
-        //               widget.currentUser['data']['user']['auth_token']);
-
-        //           textEditingController.text = '';
-        //         },
-        //         elevation: 0,
-        //         child: Icon(Icons.send),
-        //       ),
-        //     ],
-        //   ),
-        // );
         ///
       },
     );
@@ -271,10 +357,11 @@ class _ChatPageState extends State<ChatPage> {
           ),
           body: Column(
             children: <Widget>[
-              Expanded(child: buildChatList()),
+              buildChatList(),
               new Divider(height: 1.0),
               new Container(
                 child: buildChatArea(),
+                decoration: new BoxDecoration(color: Colors.white),
               ),
             ],
           ),
@@ -283,26 +370,3 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Nombre sala: ${widget.chatroom.name}"),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-      ),
-      body: Column(
-        children: <Widget>[
-          buildChatList(),
-          new Divider(height: 1.0),
-          new Container(
-            child: buildChatArea(),
-            decoration: new BoxDecoration(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/
