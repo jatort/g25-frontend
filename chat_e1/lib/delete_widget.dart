@@ -28,13 +28,11 @@ class _DeleteWidgetState extends State<DeleteWidget> {
   }
 
   _onDeleteWidgetClicked() async {
-    print('DELETING');
     startDeleting();
 
     bool isDeleted = await widget.onDeleteClicked();
 
     stopDeleting();
-    print('DELETED');
   }
 
   @override

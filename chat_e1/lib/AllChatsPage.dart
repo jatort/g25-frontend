@@ -33,7 +33,6 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
   Future _fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
-    //String url = url_api_server;
     String url = url_api_server_nuevo;
 
     Map<String, String> headers = {
@@ -41,8 +40,6 @@ class _AllChatsPageState extends State<AllChatsPage> {
       "Content-type": "application/x-www-form-urlencoded",
       HttpHeaders.authorizationHeader: "Bearer $token",
     };
-    //Map<String, dynamic> body = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
-    //var json = {"sign_in[email]": "Hello", "sign_in[password]": "body text"};
 
     final response = await http.get(url, headers: headers);
 
@@ -56,8 +53,6 @@ class _AllChatsPageState extends State<AllChatsPage> {
       roomsApi.forEach(
           (room) => rmsApi.add(ChatRoom(room['title'], room['id'].toString())));
     }
-
-    print(rmsApi);
 
     _roomsApi = rmsApi;
 
@@ -87,10 +82,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
 
         List<ChatRoom> chatrooms = [];
 
-        print("CHATROOMS FROM SOCKET: $chatroomsFromSocket");
-
         if (chatroomsFromSocket.length == 0) {
-          print("ROOOOMS DE LA API: $_roomsApi");
           _roomsApi.forEach((element) {
             chatrooms.add(element);
             model.chatRoomList.add(element);
@@ -98,16 +90,10 @@ class _AllChatsPageState extends State<AllChatsPage> {
         }
 
         model.currentUser = currentUser['data']['user']['username'];
-        print("CHATROOMS FROM SOCKET ANTES DEL FOR: $chatroomsFromSocket");
 
         chatroomsFromSocket.forEach((element) {
           chatrooms.add(element);
         });
-
-        print("CHATROOOMS: $chatrooms");
-
-        //List<ChatRoom> chatrooms = model.getChatRooms();
-
 
         return Column(
           children: [
@@ -116,7 +102,6 @@ class _AllChatsPageState extends State<AllChatsPage> {
               child: ListView.builder(
                 itemCount: chatrooms.length,
                 itemBuilder: (BuildContext context, int index) {
-                  // ChatRoom chatroom = model.chatRoomList[index];
                   return ListTile(
                     title: Text(chatrooms[index].name),
                     onTap: () => chatRoomClicked(chatrooms[index]),
@@ -163,18 +148,6 @@ class _AllChatsPageState extends State<AllChatsPage> {
       },
     );
   }
-
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('All Chats'),
-      ),
-      body: buildAllChatList(),
-    );
-  }
-  */
 
   Widget _buildNewChatroomForm() {
     return ScopedModelDescendant<ChatModel>(builder: (context, child, model) {
