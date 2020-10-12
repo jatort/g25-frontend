@@ -19,7 +19,7 @@ class GenerateImageUrl {
         //For IOS
 //        'http://localhost:5000/generatePresignedUrl',
         //For Android
-        'http://192.168.1.87:5000/generatePresignedUrl',
+        'http://192.168.0.11:5000/generatePresignedUrl',
         body: body,
       );
 

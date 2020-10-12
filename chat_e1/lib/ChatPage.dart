@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
     //String url = "$url_api_server/$idChat";
-    String url = 'http://192.168.1.87/api/v1/chats/$idChat';
+    String url = 'http://192.168.0.11/api/v1/chats/$idChat';
     print(url);
     print(token);
     Map<String, String> headers = {

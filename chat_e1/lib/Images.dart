@@ -14,6 +14,7 @@ import 'package:uuid/uuid.dart';
 import 'gallery_item.dart';
 import 'generate_image_url.dart';
 import 'gallery_photo_wrapper.dart';
+import 'delete_widget.dart';
 
 const Color kErrorRed = Colors.redAccent;
 const Color kDarkGray = Color(0xFFA3A3A3);
@@ -101,6 +102,15 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                         ),
                       ),
                     ),
+                    Positioned.fill(
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        alignment: Alignment.topRight,
+                        child: DeleteWidget(
+                          () => _onDeleteReviewPhotoClicked(index - 1),
+                        ),
+                      ),
+                    )
                   ],
                 );
               },
@@ -268,6 +278,18 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     } catch (e) {
       throw e;
     }
+  }
+
+  Future<bool> _onDeleteReviewPhotoClicked(int index) async {
+  if (_photosStatus[index] == PhotoStatus.LOADED) {
+    _photosUrls.removeAt(index);
+  }
+  _photos.removeAt(index);
+  _photosStatus.removeAt(index);
+  _photosSources.removeAt(index);
+  _galleryItems.removeAt(index);
+  setState(() {});
+  return true;
   }
 
   _showOpenAppSettingsDialog(context) {
