@@ -85,7 +85,7 @@ class ChatModel extends Model {
       print("recibida");
       Map<String, dynamic> data = json.decode(jsonData);
       messages.add(Message(
-          data['content'], data['senderChatID'], data['receiverChatID']));
+          data['content'], data['senderChatID'], data['receiverChatID'], data['timeMsg'] ));
       notifyListeners();
     });
 
