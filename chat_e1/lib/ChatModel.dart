@@ -157,7 +157,28 @@ class ChatModel extends Model {
   }
 
   List<Message> getMessagesForChatID(String chatID) {
-    return messages.where((msg) => msg.receiverID == chatID).toList();
+    List<Message> msgs = List<Message>();
+    messages.forEach((element) {
+      if (element.text.contains("@")) {
+        final elementWordList = element.text.split(" ");
+        int notificationCounter = 0;
+        elementWordList.forEach((word) {
+          if (word[0] == "@") {
+            notificationCounter += 1;
+            if (element.senderID == currentUser) {
+              msgs.add(element);
+            }
+          }
+        });
+        if (notificationCounter == 0) {
+          msgs.add(element);
+        }
+      } else {
+        msgs.add(element);
+      }
+    });
+
+    return msgs.where((msg) => msg.receiverID == chatID).toList();
   }
 
   List<ChatRoom> getChatRooms() {

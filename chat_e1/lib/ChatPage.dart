@@ -166,91 +166,89 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildChatArea() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
-        return new IconTheme(
-          data: new IconThemeData(color: Theme.of(context).accentColor),
-          child: new Container(
-              margin: const EdgeInsets.symmetric(horizontal: 9.0),
-              child: Column(
-                children: <Widget>[
-                  // FORM PARA ENVIAR MENSAJE
-
-                  new Container(
-                    margin: EdgeInsets.all(24),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _buildMessage(),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  //BOTON SUBMIT MENSAJE
-                  RaisedButton(
-                      child: Text(
-                        "Enviar",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (!_formKey.currentState.validate()) {
-                          return;
-                        }
-                        _formKey.currentState.save();
-
-                        String _username =
-                            widget.currentUser['data']['user']['username'];
-                        model.sendMessage(
-                            _username,
-                            _message,
-                            widget.chatroom.chatID,
-                            widget.currentUser['data']['user']['auth_token']);
-                        _formKey.currentState.reset();
-                        //_submitMsg(_message, _username);
-                      }),
-                ],
-              ),
-              decoration: Theme.of(context).platform == TargetPlatform.iOS
-                  ? new BoxDecoration(
-                      border:
-                          new Border(top: new BorderSide(color: Colors.red)))
-                  : null),
-        );
-
-        ///
         return Container(
+          margin: const EdgeInsets.only(right: 9, left: 9),
           child: Row(
             children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: TextField(
-                  controller: textEditingController,
+              // FORM PARA ENVIAR MENSAJE
+
+              Expanded(
+                flex: 3,
+                child: Container(
+                  margin: EdgeInsets.all(0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _buildMessage(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(width: 10.0),
-              FloatingActionButton(
-                onPressed: () {
-                  String _username =
-                      widget.currentUser['data']['user']['username'];
-                  model.sendMessage(
-                      _username,
-                      textEditingController.text,
-                      widget.chatroom.chatID,
-                      widget.currentUser['data']['user']['auth_token']);
 
-                  textEditingController.text = '';
-                },
-                elevation: 0,
-                child: Icon(Icons.send),
+              //BOTON SUBMIT MENSAJE
+              Expanded(
+                flex: 1,
+                child: RaisedButton(
+                    child: Text(
+                      "Enviar",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 15,
+                      ),
+                    ),
+                    onPressed: () {
+                      if (!_formKey.currentState.validate()) {
+                        return;
+                      }
+                      _formKey.currentState.save();
+
+                      String _username =
+                          widget.currentUser['data']['user']['username'];
+                      model.sendMessage(
+                          _username,
+                          _message,
+                          widget.chatroom.chatID,
+                          widget.currentUser['data']['user']['auth_token']);
+                      _formKey.currentState.reset();
+                      //_submitMsg(_message, _username);
+                    }),
               ),
             ],
           ),
         );
 
+        ///
+        // return Container(
+        //   child: Row(
+        //     children: <Widget>[
+        //       Container(
+        //         width: MediaQuery.of(context).size.width * 0.8,
+        //         child: TextField(
+        //           controller: textEditingController,
+        //         ),
+        //       ),
+        //       SizedBox(width: 10.0),
+        //       FloatingActionButton(
+        //         onPressed: () {
+        //           String _username =
+        //               widget.currentUser['data']['user']['username'];
+        //           model.sendMessage(
+        //               _username,
+        //               textEditingController.text,
+        //               widget.chatroom.chatID,
+        //               widget.currentUser['data']['user']['auth_token']);
+
+        //           textEditingController.text = '';
+        //         },
+        //         elevation: 0,
+        //         child: Icon(Icons.send),
+        //       ),
+        //     ],
+        //   ),
+        // );
         ///
       },
     );
@@ -273,11 +271,10 @@ class _ChatPageState extends State<ChatPage> {
           ),
           body: Column(
             children: <Widget>[
-              buildChatList(),
+              Expanded(child: buildChatList()),
               new Divider(height: 1.0),
               new Container(
                 child: buildChatArea(),
-                decoration: new BoxDecoration(color: Colors.white),
               ),
             ],
           ),

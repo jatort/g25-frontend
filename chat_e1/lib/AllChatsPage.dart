@@ -17,7 +17,6 @@ class AllChatsPage extends StatefulWidget {
 }
 
 class _AllChatsPageState extends State<AllChatsPage> {
-
   String _newChatRoom;
 
   final nameChatController = TextEditingController(
@@ -82,9 +81,9 @@ class _AllChatsPageState extends State<AllChatsPage> {
           _rooms.forEach((room) => model.chatRoomList
               .add(ChatRoom(room['title'], room['id'].toString())));
         }
-
+        model.currentUser = currentUser['data']['user']['username'];
         List<ChatRoom> chatrooms = model.getChatRooms();
-        
+
         return Column(
           children: [
             Expanded(
