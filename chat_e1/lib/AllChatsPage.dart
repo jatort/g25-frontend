@@ -97,6 +97,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
           });
         }
 
+        model.currentUser = currentUser['data']['user']['username'];
         print("CHATROOMS FROM SOCKET ANTES DEL FOR: $chatroomsFromSocket");
 
         chatroomsFromSocket.forEach((element) {
@@ -106,6 +107,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
         print("CHATROOOMS: $chatrooms");
 
         //List<ChatRoom> chatrooms = model.getChatRooms();
+
 
         return Column(
           children: [

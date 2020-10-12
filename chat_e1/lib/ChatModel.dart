@@ -81,27 +81,63 @@ class ChatModel extends Model {
       notifyListeners();
     });
 
+    socketIO.subscribe('receive_notification', (jsonData) {
+      print("recibida");
+      Map<String, dynamic> data = json.decode(jsonData);
+      messages.add(Message(
+          data['content'], data['senderChatID'], data['receiverChatID']));
+      notifyListeners();
+    });
+
     socketIO.connect();
   }
 
   void sendMessage(
-      String username, String text, String receiverChatID, String token) async {
-    var respuesta = await _sendMessageToApi(receiverChatID, token, text);
-    print('Username en sendMessage: $username');
-    print("RESPUESTA DEL POST: $respuesta");
-
-    String timeMsg = respuesta['created_at'].toString();
-    messages.add(Message(text, username, receiverChatID, timeMsg));
-    socketIO.sendMessage(
-      'send_message',
-      json.encode({
-        'receiverChatID': receiverChatID,
-        'senderChatID': username,
-        'content': text,
-        'timeMsg': timeMsg,
-      }),
-    );
-    notifyListeners();
+    String username,
+    String text,
+    String receiverChatID,
+    String token,
+  ) async {
+    String user = "null";
+    final textList = text.split(" ");
+    textList.forEach((element) {
+      if (element[0] == "@") {
+        user = element.substring(1);
+      }
+    });
+    
+    if (user != "null") {
+      print("FUNCIONANDO ARROBA adsfkjllllllllllllllllñjfdlksafsfajdlksfja");
+      var now = new DateTime.now().toString();
+      messages.add(Message(text, username, receiverChatID, now));
+      socketIO.sendMessage(
+        'send_notification',
+        json.encode({
+          'receiverChatID': receiverChatID,
+          'senderChatID': username,
+          'content': text,
+          'privateUser': user,
+          'timeMsg': now,
+        }),
+      );
+      notifyListeners();
+    } else {
+      var respuesta = await _sendMessageToApi(receiverChatID, token, text);
+      print('Username en sendMessage: $username');
+      print("RESPUESTA DEL POST: $respuesta");
+      String timeMsg = respuesta['created_at'].toString();
+      messages.add(Message(text, username, receiverChatID, timeMsg));
+      socketIO.sendMessage(
+        'send_message',
+        json.encode({
+          'receiverChatID': receiverChatID,
+          'senderChatID': username,
+          'content': text,
+          'timeMsg': timeMsg,
+        }),
+      );
+      notifyListeners();
+    }
   }
 
   void sendRoom(String nameChat, String token) async {
@@ -119,7 +155,28 @@ class ChatModel extends Model {
   }
 
   List<Message> getMessagesForChatID(String chatID) {
-    return messages.where((msg) => msg.receiverID == chatID).toList();
+    List<Message> msgs = List<Message>();
+    messages.forEach((element) {
+      if (element.text.contains("@")) {
+        final elementWordList = element.text.split(" ");
+        int notificationCounter = 0;
+        elementWordList.forEach((word) {
+          if (word[0] == "@") {
+            notificationCounter += 1;
+            if (element.senderID == currentUser) {
+              msgs.add(element);
+            }
+          }
+        });
+        if (notificationCounter == 0) {
+          msgs.add(element);
+        }
+      } else {
+        msgs.add(element);
+      }
+    });
+
+    return msgs.where((msg) => msg.receiverID == chatID).toList();
   }
 
   List<ChatRoom> getChatRooms() {
