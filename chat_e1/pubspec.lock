@@ -78,7 +78,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
-
   country_pickers:
     dependency: transitive
     description:
@@ -140,14 +139,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_icons:
-    dependency: "direct main"
-    description:
-      name: flutter_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
-
   flutter_chips_input:
     dependency: transitive
     description:
@@ -169,6 +160,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.13.6"
+  flutter_icons:
+    dependency: "direct main"
+    description:
+      name: flutter_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -235,8 +233,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
-  image_picker:
-    dependency: "direct main"
   image:
     dependency: transitive
     description:
@@ -244,12 +240,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.18"
+  image_picker:
+    dependency: "direct main"
     description:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.7+11"
-
   image_picker_for_web:
     dependency: transitive
     description:
@@ -271,7 +268,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
-
   js:
     dependency: transitive
     description:
@@ -356,6 +352,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.4"
+  phone_number:
+    dependency: transitive
+    description:
+      name: phone_number
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.3"
   photo_view:
     dependency: "direct main"
     description:
@@ -377,34 +387,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
-  process:
-    dependency: transitive
-    description:
-      name: process
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.13"
-  petitparser:
-    dependency: transitive
-    description:
-      name: petitparser
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.4"
-  phone_number:
-    dependency: transitive
-    description:
-      name: phone_number
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.3"
-  plugin_platform_interface:
-    dependency: transitive
-    description:
-      name: plugin_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   pointycastle:
     dependency: transitive
     description:
@@ -412,6 +394,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  process:
+    dependency: transitive
+    description:
+      name: process
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.13"
   random_string:
     dependency: transitive
     description:
@@ -510,3 +499,81 @@ packages:
     version: "2.0.0"
   string_scanner:
     dependency: transitive
+    description:
+      name: string_scanner
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
+  term_glyph:
+    dependency: transitive
+    description:
+      name: term_glyph
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
+  test_api:
+    dependency: transitive
+    description:
+      name: test_api
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.17"
+  typed_data:
+    dependency: transitive
+    description:
+      name: typed_data
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
+  uuid:
+    dependency: "direct main"
+    description:
+      name: uuid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.2"
+  validators:
+    dependency: transitive
+    description:
+      name: validators
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
+  vector_math:
+    dependency: transitive
+    description:
+      name: vector_math
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.8"
+  vin_decoder:
+    dependency: transitive
+    description:
+      name: vin_decoder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
+  win32:
+    dependency: transitive
+    description:
+      name: win32
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.7.3"
+  xdg_directories:
+    dependency: transitive
+    description:
+      name: xdg_directories
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.5.1"
+sdks:
+  dart: ">=2.9.0-14.0.dev <3.0.0"
+  flutter: ">=1.20.0 <2.0.0"

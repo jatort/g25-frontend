@@ -70,8 +70,11 @@ class _ChatPageState extends State<ChatPage> {
     List msgApi = [];
 
     if (messagesApi != null) {
-      messagesApi.forEach((mensaje) => msgApi.add(Message(mensaje['body'],
-          mensaje['username'], mensaje['chat_id'].toString())));
+      messagesApi.forEach((mensaje) => msgApi.add(Message(
+          mensaje['body'],
+          mensaje['username'],
+          mensaje['chat_id'].toString(),
+          mensaje['created_at'].toString())));
     }
     print(msgApi);
     _messagesApi = msgApi;
@@ -84,33 +87,36 @@ class _ChatPageState extends State<ChatPage> {
   //Api obtiene los mensajes de la sala de chat
 
   Widget buildSingleMessage(Message message) {
-    if (message.text.substring(0, 4) == 'http'){
+    if (message.text.contains('https://d3lh42ld02oh6l.cloudfront.net/')) {
       return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: new Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Container(margin: const EdgeInsets.only(right: 18.0)),
-          new Expanded(
-            child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Text('${message.senderID}:   [${new DateTime.now()}]'),
-                new Container(
-                  margin: const EdgeInsets.only(top: 6.0),
-                  child: new Image.network(message.text, width: 350,),
-                ),
-              ],
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(margin: const EdgeInsets.only(right: 18.0)),
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text('${message.senderID}:   [${new DateTime.now()}]'),
+                  new Container(
+                    margin: const EdgeInsets.only(top: 6.0),
+                    child: new Image.network(
+                      message.text,
+                      width: 350,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-      color: Colors.indigo[100],
-      padding: EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 0,
-      ),
-    );
+          ],
+        ),
+        color: Colors.indigo[100],
+        padding: EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 0,
+        ),
+      );
     }
 
     return Container(
@@ -123,7 +129,7 @@ class _ChatPageState extends State<ChatPage> {
             child: new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Text('${message.senderID}:   [${new DateTime.now()}]'),
+                new Text('${message.senderID}:   [${message.timeMsg}]'),
                 new Container(
                   margin: const EdgeInsets.only(top: 6.0),
                   child: new Text(message.text),
@@ -187,15 +193,17 @@ class _ChatPageState extends State<ChatPage> {
             model.messages.add(element);
           });
         }
-
+        print("MENSJAES ANTES DEL FOR DEL SOCKET: $messagesOrder");
         messagesFromSocket.forEach((element) {
           messagesOrder.add(element);
         });
+        print("MENSAJES A IMPRIMIR EN EL CHAT: $messagesOrder");
         return Container(
           height: MediaQuery.of(context).size.height * 0.65,
           child: ListView.builder(
             itemCount: messagesOrder.length,
             itemBuilder: (BuildContext context, int index) {
+              print("INDICE DE MENSAJES: $index");
               return buildSingleMessage(messagesOrder[index]);
             },
           ),
@@ -203,15 +211,16 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
+
   var _result;
   _navigateUploadImage(BuildContext context) async {
     _result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Images()),
-          );
+      context,
+      MaterialPageRoute(builder: (context) => Images()),
+    );
     //print(_result);
-    
   }
+
   Widget buildChatArea() {
     return ScopedModelDescendant<ChatModel>(
       builder: (context, child, model) {
@@ -243,23 +252,22 @@ class _ChatPageState extends State<ChatPage> {
                     children: [
                       RaisedButton(
                           child: Icon(
-                              MaterialIcons.add_a_photo,
-                              size: 35,
-                            ),
-                          onPressed: () async{
+                            MaterialIcons.add_a_photo,
+                            size: 35,
+                          ),
+                          onPressed: () async {
                             await _navigateUploadImage(context);
                             // Se recorre la lista de imagenes y se envia un mensaje por cada url
-                            if (_result != null){
-                              String _username =
-                                widget.currentUser['data']['user']['username'];
-                              _result.forEach((image) => 
-                              model.sendMessage(
-                                _username,
-                                image,
-                                widget.chatroom.chatID,
-                                widget.currentUser['data']['user']['auth_token'])
-                              );
-                            }                             
+                            if (_result != null) {
+                              String _username = widget.currentUser['data']
+                                  ['user']['username'];
+                              _result.forEach((image) => model.sendMessage(
+                                  _username,
+                                  image,
+                                  widget.chatroom.chatID,
+                                  widget.currentUser['data']['user']
+                                      ['auth_token']));
+                            }
                           }),
                       new Spacer(),
                       RaisedButton(
@@ -281,7 +289,8 @@ class _ChatPageState extends State<ChatPage> {
                                 _username,
                                 _message,
                                 widget.chatroom.chatID,
-                                widget.currentUser['data']['user']['auth_token']);
+                                widget.currentUser['data']['user']
+                                    ['auth_token']);
                             _formKey.currentState.reset();
                             //_submitMsg(_message, _username);
                           }),

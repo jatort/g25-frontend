@@ -32,7 +32,7 @@ class ChatModel extends Model {
 
     var respuesta = json.decode(response.body);
 
-    return respuesta;
+    return respuesta['data']['message'];
   }
 
   Future _sendChatroomToApi(String nameChat, String token) async {
@@ -64,14 +64,14 @@ class ChatModel extends Model {
     //currentUser = "Oscar";
     chatRoomList = chatrooms.toList();
 
-    socketIO =
-        SocketIOManager().createSocketIO('https://fluchat.herokuapp.com', '/');
+    socketIO = SocketIOManager()
+        .createSocketIO('https://servere1chat.herokuapp.com', '/');
     socketIO.init();
 
     socketIO.subscribe('receive_message', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
-      messages.add(Message(
-          data['content'], data['senderChatID'], data['receiverChatID']));
+      messages.add(Message(data['content'], data['senderChatID'],
+          data['receiverChatID'], data['timeMsg']));
       notifyListeners();
     });
 
@@ -89,19 +89,22 @@ class ChatModel extends Model {
     var respuesta = await _sendMessageToApi(receiverChatID, token, text);
     print('Username en sendMessage: $username');
     print("RESPUESTA DEL POST: $respuesta");
-    messages.add(Message(text, username, receiverChatID));
+
+    String timeMsg = respuesta['created_at'].toString();
+    messages.add(Message(text, username, receiverChatID, timeMsg));
     socketIO.sendMessage(
       'send_message',
       json.encode({
         'receiverChatID': receiverChatID,
         'senderChatID': username,
         'content': text,
+        'timeMsg': timeMsg,
       }),
     );
     notifyListeners();
   }
 
-  void sendRoom(String nameChat, String chatID, String token) async {
+  void sendRoom(String nameChat, String token) async {
     var respuesta = await _sendChatroomToApi(nameChat, token);
     chatRoomList.add(ChatRoom(nameChat, respuesta['id'].toString()));
 

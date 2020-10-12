@@ -189,9 +189,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
                   onSubmitted: (text) {
                     setState(() {
                       if (nameChatController.text != "") {
-                        model.sendRoom(
-                            nameChatController.text,
-                            nameChatController.text,
+                        model.sendRoom(nameChatController.text,
                             currentUser['data']['user']['auth_token']);
                       }
                     });
@@ -211,9 +209,7 @@ class _AllChatsPageState extends State<AllChatsPage> {
               onPressed: () {
                 setState(() {
                   if (nameChatController.text != "") {
-                    model.sendRoom(
-                        nameChatController.text,
-                        nameChatController.text,
+                    model.sendRoom(nameChatController.text,
                         currentUser['data']['user']['auth_token']);
                   }
                 });
