@@ -84,8 +84,8 @@ class ChatModel extends Model {
     socketIO.subscribe('receive_notification', (jsonData) {
       print("recibida");
       Map<String, dynamic> data = json.decode(jsonData);
-      messages.add(Message(
-          data['content'], data['senderChatID'], data['receiverChatID']));
+      messages.add(Message(data['content'], data['senderChatID'],
+          data['receiverChatID'], data['timeMsg']));
       notifyListeners();
     });
 
@@ -105,7 +105,7 @@ class ChatModel extends Model {
         user = element.substring(1);
       }
     });
-    
+
     if (user != "null") {
       print("FUNCIONANDO ARROBA adsfkjllllllllllllllllñjfdlksafsfajdlksfja");
       var now = new DateTime.now().toString();

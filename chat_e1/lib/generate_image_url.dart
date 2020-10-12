@@ -19,7 +19,7 @@ class GenerateImageUrl {
         //For IOS
 //        'http://localhost:5000/generatePresignedUrl',
         //For Android
-        'http://10.0.2.2:5000/generatePresignedUrl',
+        'https://serverimagee1.herokuapp.com/',
         body: body,
       );
 
