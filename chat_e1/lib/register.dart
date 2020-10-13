@@ -23,7 +23,7 @@ class Register extends State<RegisterScreen> {
   Map<String, dynamic> data;
   String url_localhost = 'http://10.0.2.2:3000/api/v1/sign_up';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/sign_up';
-  String url_api_server_nuevo = 'http://3.91.230.50:3000/api/v1/sign_up';
+  String url_api_server_nuevo = 'https://arqui-example.tk/api/v1/sign_up';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
