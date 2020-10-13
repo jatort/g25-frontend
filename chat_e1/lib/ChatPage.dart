@@ -31,7 +31,9 @@ class _ChatPageState extends State<ChatPage> {
 
   String url_localhost = 'http://10.0.2.2:3000/api/v1/chats';
   String url_api_server = 'http://34.229.56.163:3000/api/v1/chats';
-  String url_api_server_nuevo = 'https://arqui-example.tk/api/v1/chats'; //USANDO
+  String url_api_server_nuevo =
+      'https://arqui-example.tk/api/v1/chats'; //USANDO
+  String url_api_server_cache = 'https://arqui-e1-with-cache.tk/api/v1/chats';
   List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
