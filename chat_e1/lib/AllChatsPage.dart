@@ -32,10 +32,11 @@ class _AllChatsPageState extends State<AllChatsPage> {
   String url_api_server_nuevo =
       'https://arqui-example.tk/api/v1/chats'; //USANDO
   String url_api_server_cache = 'https://arqui-e1-with-cache.tk/api/v1/chats';
+  String url_api_server_auth = 'http://67.202.62.192:3000/api/v1/chats';
 
   Future _fetchRooms() async {
     final token = currentUser['data']['user']['auth_token'];
-    String url = url_api_server_cache;
+    String url = url_localhost;
 
     Map<String, String> headers = {
       "Accept": "application/json",

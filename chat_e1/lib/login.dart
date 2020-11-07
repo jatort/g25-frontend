@@ -21,6 +21,7 @@ class Login extends State<LoginScreen> {
   String url_api_server = 'http://34.229.56.163:3000/api/v1/sign_in';
   String url_api_server_nuevo = 'https://arqui-example.tk/api/v1/sign_in';
   String url_api_server_cache = 'https://arqui-e1-with-cache.tk/api/v1/sign_in';
+  String url_api_server_auth = 'http://67.202.62.192:3000/api/v1/sign_in';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -31,7 +32,7 @@ class Login extends State<LoginScreen> {
   }
 
   Future _signIn(Map<String, String> datosUsuario) async {
-    String url = url_api_server_cache;
+    String url = url_localhost;
 
     Map<String, String> headers = {
       "Accept": "application/json",

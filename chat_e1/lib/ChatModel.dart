@@ -15,10 +15,11 @@ class ChatModel extends Model {
   String url_api_server_nuevo =
       'https://arqui-example.tk/api/v1/chats'; //USANDO
   String url_api_server_cache = 'https://arqui-e1-with-cache.tk/api/v1/chats';
+  String url_api_server_auth = 'http://67.202.62.192:3000/api/v1/chats';
   List _messagesApi;
 
   Future _sendMessageToApi(String idChat, String token, String mensaje) async {
-    String url = "$url_api_server_cache/$idChat/messages";
+    String url = "$url_localhost/$idChat/messages";
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded",
@@ -35,7 +36,7 @@ class ChatModel extends Model {
   }
 
   Future _sendChatroomToApi(String nameChat, String token) async {
-    String url = url_api_server_cache;
+    String url = url_localhost;
     Map<String, String> headers = {
       "Accept": "application/json",
       "Content-type": "application/x-www-form-urlencoded",

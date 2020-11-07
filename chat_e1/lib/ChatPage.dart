@@ -34,13 +34,14 @@ class _ChatPageState extends State<ChatPage> {
   String url_api_server_nuevo =
       'https://arqui-example.tk/api/v1/chats'; //USANDO
   String url_api_server_cache = 'https://arqui-e1-with-cache.tk/api/v1/chats';
+  String url_api_server_auth = 'http://67.202.62.192:3000/api/v1/chats';
   List _messagesApi = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future _getMessagesFromApi() async {
     String idChat = chatroom.chatID;
     String token = currentUser['data']['user']['auth_token'];
-    String url = "$url_api_server_nuevo/$idChat";
+    String url = "$url_localhost/$idChat";
 
     Map<String, String> headers = {
       "Accept": "application/json",
